@@ -8,6 +8,10 @@ class Pokemon(models.Model):
     primary_type = models.CharField(max_length=50)
     secondary_type = models.CharField(max_length=50)
     sprite = models.CharField(max_length=200)
+    pkdex = models.CharField(max_length=400)
+    rarity = models.IntegerField()
+    owner = models.IntegerField() #TEMPORARY, WILL EVENTUALLY MAP TO A USER
+
 
     def __str__(self):
         return self.name
