@@ -6,7 +6,6 @@
 
   <!-- NES.css -->
   <link rel="stylesheet" href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" />
-  <!-- Press Start 2P (pixel font) -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
 
   <style>
@@ -26,18 +25,16 @@
     h1 {
       margin-bottom: 1.5rem;
     }
-    /* Grid for Pokémon cards */
     .collection-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       gap: 1rem;
       justify-items: center;
     }
-    /* Base styling for cards */
     .pokemon-card {
       background: #333;
       padding: 1.5rem;
-      border: 2px solid #555; /* Default border color */
+      border: 2px solid #555;
       width: 150px;
     }
     .pokemon-sprite {
@@ -52,25 +49,24 @@
       color: #ffce56;
     }
 
-    /* Rarity-specific border colors */
+    /* border colors */
     .pokemon-card.rarity-1 {
-      border-color: #d3d3d3 !important;  /* Light gray */
+      border-color: #d3d3d3 !important;
     }
     .pokemon-card.rarity-2 {
-      border-color: #90ee90 !important;  /* Light green */
+      border-color: #90ee90 !important;
     }
     .pokemon-card.rarity-3 {
-      border-color: #add8e6 !important;  /* Light blue */
+      border-color: #add8e6 !important;
     }
     .pokemon-card.rarity-4 {
-      border-color: #d8bfd8 !important;  /* Light purple (thistle) */
+      border-color: #d8bfd8 !important;
     }
     .pokemon-card.rarity-5 {
-      border-color: #ffa500 !important;  /* Orange */
+      border-color: #ffa500 !important;
     }
     .pokemon-card.rarity-high {
-      /* For rarity 6 or 7, use a vivid color or a simulated gradient effect if needed */
-      border-color: #ff69b4 !important;  /* Hot pink as an example */
+      border-color: #ff69b4 !important;
     }
   </style>
 </head>
@@ -88,7 +84,7 @@
       </button>
     </div>
 
-    <!-- Grid of Pokémon cards loaded from the database -->
+    <!-- Grid of Pokemon -->
     <div class="collection-grid">
       {% for pokemon in pokemons %}
         <div class="pokemon-card
@@ -113,7 +109,7 @@
         <p>You have no Pokémon in your collection yet!</p>
       {% endfor %}
 
-      <!-- Form/button to generate a new Pokémon -->
+      <!-- button to create new Pokemon -->
       <form action="{% url 'generate_pokemon' %}" method="post">
         {% csrf_token %}
         <button type="submit" class="nes-btn is-primary">

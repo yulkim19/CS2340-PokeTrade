@@ -15,10 +15,7 @@ def about(request):
 
 def generate_pokemon_view(request):
     if request.method == "POST":
-        # Use the current user (or Trainer) to generate and add a Pokemon.
         generateRandomPokemon(request.user)
-        # Optionally, you can add a Django message here.
-        return redirect('Collection.index')  # Redirect to the collection page (or wherever you like)
-    # If it's not a POST, just redirect.
+        return redirect('Collection.index')
     return redirect('Collection.index')
 

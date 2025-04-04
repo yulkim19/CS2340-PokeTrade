@@ -86,7 +86,6 @@ def generateRandomPokemon(trainer):
     pkdx = ""
     for entry in data.get("flavor_text_entries", []):
         if entry["language"]["name"] == "en":
-            # Clean up the text by replacing newline and form feed characters
             pkdx = entry["flavor_text"].replace("\n", " ").replace("\f", " ")
             break
     new_pokemon = Pokemon.objects.create(
