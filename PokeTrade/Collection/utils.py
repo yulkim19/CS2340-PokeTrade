@@ -42,7 +42,6 @@ def generateRandomPokemon(trainer):
     # Rarity - Num 7-1 rep diff levels
     # Type(s) - Str type
     # pkdx - dex entry str
-    owner = trainer #doesn't do anything right now, but will link to owner
     try:
         rand = random.randint(1, 1010) # random pkmn between 1 and 1010
         url = f"https://pokeapi.co/api/v2/pokemon/{rand}"
@@ -89,7 +88,7 @@ def generateRandomPokemon(trainer):
             pkdx = entry["flavor_text"].replace("\n", " ").replace("\f", " ")
             break
     new_pokemon = Pokemon.objects.create(
-        owner=0,  # FIX THIS
+        owner=trainer,
         pokedex=rand,
         name=name,
         sprite=sprite,

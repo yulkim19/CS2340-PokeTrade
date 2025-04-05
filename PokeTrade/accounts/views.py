@@ -4,6 +4,10 @@ from django.contrib.auth import login as auth_login, authenticate, logout as aut
 from .forms import CustomUserCreationForm, CustomErrorList
 from django.contrib.auth.decorators import login_required
 
+from Collection.utils import generateRandomPokemon
+
+
+
 def signup(request):
     template_data = {}
     template_data['title'] = 'Sign Up'
@@ -26,6 +30,8 @@ def signup(request):
                 user.is_staff = True
                 user.is_superuser = True
             user.save()
+            for i in range(10):
+                generateRandomPokemon(user)
 
             return redirect('accounts.login')
         else:

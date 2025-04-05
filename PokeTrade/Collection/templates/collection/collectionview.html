@@ -27,7 +27,7 @@
     }
     .collection-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 1rem;
       justify-items: center;
     }
@@ -35,14 +35,21 @@
       background: #333;
       padding: 1.5rem;
       border: 4px solid #555;
-      width: 150px;
+      width: 200px;
+      height: 275px;
       background: url('{% static "img/pkbg2.png" %}') no-repeat center center;
       background-size: cover; /* adjust as needed */
     }
+    .pokemon-card p {
+  text-align: center;
+  word-wrap: break-word; /* allows long words to break and wrap */
+  white-space: normal;   /* ensures text wraps instead of staying on one line */
+  overflow: hidden;      /* optional: hides any overflow */
+}
     .pokemon-sprite {
       display: block;
       margin: 0 auto 0.5rem auto;
-      width: 100px;
+      width: 125px;
     }
     .rarity-label {
       font-size: 0.8rem;
@@ -59,13 +66,13 @@
       border-color: #90ee90 !important;
     }
     .pokemon-card.rarity-3 {
-      border-color: #add8e6 !important;
+      border-color: #6bacc1 !important;
     }
     .pokemon-card.rarity-4 {
-      border-color: #d8bfd8 !important;
+      border-color: #d98bd9 !important;
     }
     .pokemon-card.rarity-5 {
-      border-color: #ffa500 !important;
+      border-color: #ffb32f !important;
     }
     .pokemon-card.rarity-high {
       border-color: #ff69b4 !important;
@@ -78,12 +85,6 @@
 
     <!-- Navigation buttons -->
     <div style="margin-bottom:1rem;">
-      <button class="nes-btn is-success" onclick="window.location.href='/roam';">
-        Roaming Field
-      </button>
-      <button class="nes-btn" onclick="window.location.href='/';">
-        Home
-      </button>
     </div>
 
     <!-- Grid of Pokemon -->

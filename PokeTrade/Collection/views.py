@@ -4,7 +4,7 @@ from .utils import generateRandomPokemon
 from .models import Pokemon
 
 def index(request):
-    pokemons = Pokemon.objects.filter(owner=0) #EDIT THIS LATER
+    pokemons = Pokemon.objects.filter(owner=request.user) #EDIT THIS LATER
     context = {
         'pokemons': pokemons,
     }
