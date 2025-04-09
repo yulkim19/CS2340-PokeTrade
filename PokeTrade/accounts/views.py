@@ -4,7 +4,7 @@ from django.contrib.auth import login as auth_login, authenticate, logout as aut
 from .forms import CustomUserCreationForm, CustomErrorList
 from django.contrib.auth.decorators import login_required
 
-from PokeTrade.Collection.utils import generateRandomPokemon
+from Collection.utils import generateRandomPokemon
 
 
 

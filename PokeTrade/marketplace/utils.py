@@ -1,6 +1,4 @@
 from .models import MarketPost, TradeOffer
-from PokeTrade.Collection.models import Pokemon
-from django.contrib.auth.models import User
 
 
 def createMarketPost(user, pokemon):

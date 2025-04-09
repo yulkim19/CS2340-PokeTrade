@@ -4,7 +4,7 @@ from .models import MarketPost
 from .utils import createMarketPost, createTradeOffer
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from PokeTrade.Collection.models import Pokemon
+from Collection.models import Pokemon
 
 
 # Create your views here.

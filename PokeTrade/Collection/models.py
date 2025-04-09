@@ -14,7 +14,7 @@ class Pokemon(models.Model):
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="pokemons"  # This allows you to do user.pokemons.all()
+        related_name="pokemons" # This allows you to do user.pokemons.all()
     )
 
     def __str__(self):

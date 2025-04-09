@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from PokeTrade.Collection.models import Pokemon
+from Collection.models import Pokemon
 
 
 # Create your models here.
