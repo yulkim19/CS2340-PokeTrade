@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
+
 # Create your models here.
 
 # Create a custom UserAdmin class
@@ -26,6 +27,7 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('username', 'email', 'password1', 'password2', 'is_active', 'is_staff'),
         }),
     )
+
 
 # Unregister the default UserAdmin and register the custom one
 admin.site.unregister(User)

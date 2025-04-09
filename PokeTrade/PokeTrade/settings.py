@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Collection',
     'accounts',
+    'marketplace',
 ]
 
 MIDDLEWARE = [
