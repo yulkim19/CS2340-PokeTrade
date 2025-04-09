@@ -34,6 +34,7 @@ def fetch_pokemon(name):
     else:
         print("could not fetch pokemon")
 
+
 def generateRandomPokemon(trainer):
     # Fields:
     # Owner - owner
@@ -43,7 +44,7 @@ def generateRandomPokemon(trainer):
     # Type(s) - Str type
     # pkdx - dex entry str
     try:
-        rand = random.randint(1, 1010) # random pkmn between 1 and 1010
+        rand = random.randint(1, 1010)  # random pkmn between 1 and 1010
         url = f"https://pokeapi.co/api/v2/pokemon/{rand}"
         response = requests.get(url)
         data = response.json()
@@ -73,7 +74,8 @@ def generateRandomPokemon(trainer):
         rarity = 3
     elif stat_total > 275:
         rarity = 2
-    else: rarity = 1
+    else:
+        rarity = 1
 
     if shiny: rarity += 2
 
