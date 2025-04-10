@@ -1,50 +1,51 @@
 {% extends  'base.html' %}
 {% block content %}
-    <div class="p-3 mt-4">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="card shadow p-3 mb-4 rounded">
-                        <div class="card-body">
-                            <h2>Login</h2>
-                            <hr />
-                            {% if template_data.error %}
-                            <div class="alert alert-danger" role="alert">
-                                {{ template_data.error }}
-                            </div>
-                            {% endif %}
-                        <form method="POST">
-                            {% csrf_token %}
-                            <p>
-                                <label for="username">Username</label>
-                                <input id="username" type="text" name="username" required autocomplete="complete"
-                                       class="form-control">
-                            </p>
-                            <p>
-                                <label for="password">Password</label>
-                                <input id="password" type="password" name="password" required
-                                       autocomplete="current-password" class="form-control">
-                            </p>
-                            <div class="text-center">
-                                <button type="submit" class="btn bg-dark text-white">Login</button>
-                            </div>
-                            <div class="text-center">
-                                <a href="{% url 'accounts.password_reset' %}">
-                                    <p>Forgot your password?</p>
-                                </a>
-                            </div>
-                            <div class="text-center">
-                                <p>Don't have an account?
-                                <a href="{% url 'accounts.signup' %}">
-                                    Sign Up
-                                </a></p>
-                            </div>
-                        </form>
+{% load static %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow p-3 mb-4 rounded nes-container is-rounded">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <i class="nes-pokeball"></i>
+                            <h2 class="nes-text title">Login</h2>
                         </div>
+                        <hr />
+                        {% if template_data.error %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ template_data.error }}
+                        </div>
+                        {% endif %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        <p>
+                            <label for="username" class="nes-text">Username</label>
+                            <input id="username" type="text" name="username" required autocomplete="complete"
+                                   class="nes-input">
+                        </p>
+                        <p>
+                            <label for="password" class="nes-text">Password</label>
+                            <input id="password" type="password" name="password" required
+                                   autocomplete="current-password" class="nes-input">
+                        </p>
+                        <div class="text-center">
+                            <button type="submit" class="nes-btn is-primary">Login</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'accounts.password_reset' %}" class="nes-text">
+                                <p>Forgot your password?</p>
+                            </a>
+                        </div>
+                        <div class="text-center mt-2">
+                            <p class="nes-text">Don't have an account?
+                            <a href="{% url 'accounts.signup' %}" class="nes-btn is-error">
+                                Sign Up
+                            </a></p>
+                        </div>
+                    </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 {% endblock content %}

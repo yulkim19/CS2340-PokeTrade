@@ -1,0 +1,65 @@
+body {
+    background: #f1f1f1;
+    font-family: 'Press Start 2P', cursive;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+}
+
+.nes-container {
+    padding: 1rem;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nes-text.title {
+    font-size: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.nes-input {
+    background-color: #f0f0f0;
+    border: 2px solid #ccc;
+    color: #333;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.nes-text.is-error {
+    font-size: 1.1rem;
+    color: #e74c3c;
+    background-color: #f8d7da;
+    border: 1px solid #e74c3c;
+    padding: 1 rem;
+    border-radius: 5px;
+}
+
+.nes-btn.is-primary {
+    background-color: #3b8d99;
+    color: white;
+    font-size: 1rem;
+    margin-top: 1rem;
+    padding: 0.5rem 1 rem;
+}
+
+.nes-text a {
+    color: #3b8d99;
+    text-decoration: none;
+}
+
+.nes-text a:hover {
+    text-decoration: underline;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.text-center {
+    text-align: center;
+}
