@@ -1,7 +1,11 @@
 const modal       = document.querySelector('.modal');
 const modalTitle  = document.querySelector('.modal-title');
 const modalImage  = document.querySelector('.modal-image');
-
+const searchInput = document.getElementById("search-field");
+const searchButton = document.getElementById("search-button");
+const autocompleteList = document.getElementById("autocomplete-list");
+const pokemonCards = document.querySelectorAll('.pokemon-card');
+const pokemonNames = Array.from(pokemonCards).map(card => card.getAttribute('data-name'));
 document.querySelectorAll('.pokemon-card').forEach(card => {
   card.addEventListener('click', () => {
     modalTitle.textContent = `${card.dataset.name} (Rarity: ${card.dataset.rarity})`;
@@ -141,3 +145,58 @@ window.addEventListener('load', ()=>{
   });
   startLoop();
 });
+
+        searchButton.addEventListener("click", function () {
+            const search = searchInput.value.trim().toLowerCase();
+            if (!search) return;
+
+            let found = false;
+            pokemonCards.forEach(card => {
+                const name = card.getAttribute("data-name").toLowerCase();
+                if (name.includes(search)) {
+                    card.click();
+                    found = true;
+                }
+            });
+            if (!found) {
+                alert("No Pokemon found for: " + search);
+            }
+        });
+
+                searchInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                searchButton.click();
+            }
+        });
+                searchInput.addEventListener("input", function () {
+    const query = this.value.trim().toLowerCase();
+    autocompleteList.innerHTML = "";
+
+    if (!query) return;
+
+    const matchingNames = pokemonNames.filter(name =>
+        name.toLowerCase().startsWith(query)
+    );
+
+    matchingNames.forEach(name => {
+        const suggestion = document.createElement("div");
+        suggestion.textContent = name;
+        suggestion.classList.add('autocomplete-item');
+
+
+        suggestion.addEventListener("click", function () {
+            searchInput.value = name;
+            autocompleteList.innerHTML = "";
+        });
+
+        autocompleteList.appendChild(suggestion);
+    });
+});
+
+document.addEventListener("click", (e) => {
+    if (!autocompleteList.contains(e.target) && e.target !== searchInput) {
+        autocompleteList.innerHTML = "";
+    }
+});
+

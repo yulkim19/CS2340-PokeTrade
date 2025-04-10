@@ -7,7 +7,7 @@
 
   <link rel="stylesheet" href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"/>
   <link rel="stylesheet" href="{% static 'collection.css' %}">
 </head>
 <body>
@@ -23,6 +23,13 @@
 
     <div class="nav-buttons"></div>
 
+
+<div class="nes-field" id="search-style">
+    <input id="search-field" class="nes-input" type="text" placeholder="Search for a Pokémon" name="search" autocomplete="off">
+    <div id="autocomplete-list" class="autocomplete-items"></div>
+    <br>
+    <button id="search-button"></button>
+</div>
     <div class="collection-grid">
       {% for pokemon in pokemons %}
         <button class="pokemon-card
