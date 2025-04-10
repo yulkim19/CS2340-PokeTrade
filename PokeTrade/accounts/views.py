@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from .forms import CustomUserCreationForm, CustomErrorList
 from django.contrib.auth.decorators import login_required
-
 from Collection.utils import generateRandomPokemon
 
 
@@ -54,7 +53,7 @@ def login(request):
             return redirect('admin:index')
         else:
             auth_login(request, user)
-            return redirect('movies.index')
+            return redirect('Collection.index')
 
 @login_required
 def logout(request):

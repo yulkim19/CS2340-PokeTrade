@@ -40,7 +40,7 @@
     <!-- Header -->
     <nav class="p-2 navbar navbar-dark bg-dark navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home.index' %}">
+            <a class="navbar-brand" href="{% url 'Collection.index' %}">
                 <img src="{% static 'logo.png' %}" alt="logo" height="30">  <!-- Smaller logo -->
             </a>
             <button class="navbar-toggler" type="button"
@@ -54,11 +54,10 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav ms-auto navbar-ml">
                     {% if not user.is_authenticated %}
-                    <a class="nav-link" href="{% url 'home.about' %}">About</a>
+                    <a class="nav-link" href="{% url 'Collection.index' %}">About</a>
                     {% endif %}
                     {% if user.is_authenticated %}
                         <a class="nav-link" href="{% url 'Collection.index' %}">Collection</a>
-                        <a class="nav-link" href="{% url 'Collection.about %}">About Collection</a>
                         <a class="nav-link" href="{% url 'generate_pokemon' %}">Generate Pokemon</a>
                         <div class="vr bg-white mx-2 d-none d-lg-block"></div>
                         <a class="nav-link" href="{% url 'accounts.logout' %}">Logout ({{ user.username }})</a>
