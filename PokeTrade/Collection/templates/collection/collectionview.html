@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Pokémon Collection</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="{% static 'collection.css' %}">
+</head>
+<body>
+<div id="bg-layer"></div>
+  <div class="container">
+
+<div class="collection-header">
+  <i class="nes-pokeball"></i>
+  <h1 class="nes-text title">My Pokémon Collection</h1>
+  <i class="nes-charmander"></i>
+</div>
+
+
+    <div class="nav-buttons"></div>
+
+    <div class="collection-grid">
+      {% for pokemon in pokemons %}
+        <button class="pokemon-card
+          {% if pokemon.rarity == 1 %} rarity-1
+          {% elif pokemon.rarity == 2 %} rarity-2
+          {% elif pokemon.rarity == 3 %} rarity-3
+          {% elif pokemon.rarity == 4 %} rarity-4
+          {% elif pokemon.rarity == 5 %} rarity-5
+          {% elif pokemon.rarity in '67' %} rarity-high
+          {% endif %}"
+          data-name="{{ pokemon.name }}"
+          data-sprite="{{ pokemon.sprite }}"
+          data-rarity="{{ pokemon.rarity }}">
+          <span class="pokemon-name">{{ pokemon.name }}</span>
+          <img src="{{ pokemon.sprite }}" alt="{{ pokemon.name }}" class="pokemon-sprite">
+          <span class="rarity-label">Rarity: {{ pokemon.rarity }}</span>
+        </button>
+      {% empty %}
+        <p>You have no Pokémon in your collection yet!</p>
+      {% endfor %}
+    </div>
+
+    <img src="{% static 'img/campfire.gif' %}" alt="POKE_BALL" class="pokeball">
+
+    <dialog class="modal nes-dialog is-rounded is-primary">
+      <div class="modal-content">
+        <h2 class="modal-title">Pokémon Name</h2>
+        <img class="modal-image" src="" alt="POKE_IMAGE">
+      </div>
+    </dialog>
+
+    <form action="{% url 'generate_pokemon' %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="nes-btn is-primary">Generate Pokémon</button>
+    </form>
+  </div>
+
+  <script src="{% static 'collection.js' %}"></script>
+</body>
+</html>

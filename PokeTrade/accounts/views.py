@@ -3,6 +3,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from .forms import CustomUserCreationForm, CustomErrorList
 from django.contrib.auth.decorators import login_required
+from Collection.utils import generateRandomPokemon
+
+
 
 def signup(request):
     template_data = {}
@@ -26,6 +29,8 @@ def signup(request):
                 user.is_staff = True
                 user.is_superuser = True
             user.save()
+            for i in range(10):
+                generateRandomPokemon(user)
 
             return redirect('accounts.login')
         else:
@@ -48,7 +53,7 @@ def login(request):
             return redirect('admin:index')
         else:
             auth_login(request, user)
-            return redirect('movies.index')
+            return redirect('Collection.index')
 
 @login_required
 def logout(request):
