@@ -8,10 +8,22 @@ document.querySelectorAll('.pokemon-card').forEach(card => {
     modalImage.src = card.dataset.sprite;
     modalImage.alt = card.dataset.name;
     modal.showModal();
+
+    localStorage.setItem('offered_pokemon_name', card.dataset.name);
+    localStorage.setItem('offered_pokemon_sprite', card.dataset.sprite);
+    localStorage.setItem('offered_pokemon_rarity', card.dataset.rarity);
   });
 });
 modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
 window.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.open) modal.close(); });
+
+const pokemonName = localStorage.getItem('offered_pokemon_name');
+const tradeButton = document.querySelector('.modal .nes-btn.is-primary');
+if (tradeButton) {
+    tradeButton.addEventListener('click', () => {
+        window.location.href = `/trading/create_trade/${pokemonName}/`;
+    });
+}
 
 const SPRITES = [
   { cls:'tree-big-1',   w:70, h:88,  sway:true  },

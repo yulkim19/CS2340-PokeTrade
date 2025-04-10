@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'Collection',
     'accounts',
     'marketplace',
+    'trading',
+    'chats',
 ]
 
 MIDDLEWARE = [

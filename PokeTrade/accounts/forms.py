@@ -12,6 +12,7 @@ class CustomErrorList(ErrorList):
         return mark_safe(''.join([f'<div class="alert alert-danger" role="alert">{e}</div>' for e in self]))
 
 class CustomUserCreationForm(UserCreationForm):
+    gold = forms.IntegerField(initial=0, min_value=0, label='Gold')
     email= forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class':'form-control'}))
 
     def __init__(self, *args, **kwargs):
@@ -30,7 +31,9 @@ class CustomUserCreationForm(UserCreationForm):
     def save(self, commit=True):
         user = super(CustomUserCreationForm, self).save(commit=False)
         user.email = self.cleaned_data.get('email')
+        user.profile.gold = self.cleaned_data.get('gold')
 
         if commit:
             user.save()
+            user.profile.save()
             return user
