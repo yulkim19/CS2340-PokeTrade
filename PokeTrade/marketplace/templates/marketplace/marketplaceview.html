@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Other Users' Pokémon for Trade</title>
+  <!-- Load NES.css -->
+  <link rel="stylesheet" href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" />
+  <!-- Load NES font -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <style>
+    body {
+      font-family: 'Press Start 2P', cursive;
+      background-color: #f4f4f4;
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    /* Card styles applied to NES container cards */
+    .card {
+      width: 300px;
+      padding: 20px;
+      text-align: center;
+    }
+    .card img {
+      width: 150px;
+      height: auto;
+      margin-bottom: 15px;
+      border: 3px solid #fff;
+    }
+    /* Ensure form elements use the chosen NES font */
+    .nes-select select,
+    .nes-input,
+    .nes-btn {
+      font-family: 'Press Start 2P', cursive;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="nes-text is-primary" style="text-align: center;">Marketplace</h1>
+
+    {% if otherPosts %}
+      <div class="cards">
+        {% for post in otherPosts %}
+          <div class="card nes-container is-rounded">
+            <h3 class="nes-text is-success">{{ post.pokemon.name }}</h3>
+            <img src="{{ post.pokemon.sprite }}" alt="{{ post.pokemon.name }}" />
+            <p><strong>Rarity:</strong> {{ post.pokemon.rarity }}</p>
+
+            <!-- Make Offer Form -->
+            <form action="{% url 'makeOffer' %}" method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="seller_username" value="{{ post.user.username }}" />
+              <input type="hidden" name="seller_pokemon" value="{{ post.pokemon.name }}" />
+
+              <label for="pokemon_name_{{ forloop.counter }}">Your Pokémon:</label>
+              <div class="nes-select">
+                <select name="pokemon_name" id="pokemon_name_{{ forloop.counter }}">
+                  <option value="">None</option>
+                  {% for pokemon in request.user.pokemon_set.all %}
+                    <option value="{{ pokemon.name }}">{{ pokemon.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <label for="gold_{{ forloop.counter }}">Gold Offer:</label>
+              <input type="number" name="gold" id="gold_{{ forloop.counter }}" class="nes-input" min="0" required />
+
+              <button type="submit" class="nes-btn is-primary">Make Offer</button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="nes-text is-error" style="text-align: center;">No posts available from other users at the moment.</p>
+    {% endif %}
+  </div>
+</body>
+</html>

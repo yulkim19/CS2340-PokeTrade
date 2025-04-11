@@ -4,7 +4,7 @@ from .models import MarketPost
 from .utils import createMarketPost, createTradeOffer
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from Collection.models import Pokemon
+from  Collection.models import Pokemon
 
 
 # Create your views here.
@@ -17,7 +17,9 @@ def index(request):
         'yourPosts': yourPosts,
         'otherPosts': otherPosts
     }
-    return HttpResponse("HI")
+    return render(request, "marketplace/marketplaceview.html", context)
+
+
 
 
 @login_required
@@ -26,7 +28,7 @@ def createMarketPost(request):
         pokemon_name = request.POST.get('pokemon_name')
         pokemon = Pokemon.objects.get(name=pokemon_name, owner=request.user)
         createMarketPost(request.user, pokemon)
-    return HttpResponse("HI")
+    return redirect('marketplace.index')
 
 
 def makeOffer(request):
@@ -44,4 +46,4 @@ def makeOffer(request):
         else:
             pokemon = None
         createTradeOffer(offer, request.user, pokemon, gold)
-    return HttpResponse("HI")
+    return redirect('marketplace.index')
