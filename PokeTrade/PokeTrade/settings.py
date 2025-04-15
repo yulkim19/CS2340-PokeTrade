@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'marketplace',
     'trading',
     'chats',
+    'home',
 ]
 
 MIDDLEWARE = [

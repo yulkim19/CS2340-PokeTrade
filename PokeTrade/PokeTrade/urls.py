@@ -6,10 +6,11 @@ from django.urls import include, path
 from . import views
 
 urlpatterns = [
-    path("", include("Collection.urls")),
+    path("collection/", include("Collection.urls")),
     path("admin/", admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('marketplace/', include('marketplace.urls')),
     path('trading/', include('trading.urls')),
     path('chats/', include('chats.urls')),
+    path('', include('home.urls')),
 ]
