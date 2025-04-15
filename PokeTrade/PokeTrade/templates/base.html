@@ -23,22 +23,27 @@
             background-color: rgba(33, 37, 41, 0.1);
             border-color: rgba(255, 255, 255, 0.1);
             display: flex;
-            justify-content; space-between;
+            justify-content: space-between;
             align-items: center;
             padding: 1rem 2rem;
         }
 
+        .logo {
+            flex-grow: 0;
+
+        }
+
         .nav-links {
             display: flex;
+            justify-content: flex-end;
             gap: 1rem;
             flex-wrap: wrap;
-            justify-content: flex-end;
         }
 
         .nav-links a {
             color: white;
             text-decoration: none;
-            font-size: 0.5rem;
+            font-size: 0.75rem;
         }
 
         .nav-links a:hover {
@@ -46,7 +51,7 @@
         }
 
         .logo img {
-            height: 20px;
+            height: 10px;
         }
 
         #middle {

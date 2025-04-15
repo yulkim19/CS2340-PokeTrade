@@ -29,5 +29,5 @@ def trade_pokemon(request, pokemon_name):
             gold = gold_amount if gold_amount else None
         )
         return redirect('Collection.index')
-    return render(request, 'create_trade.html', {'offered_pokemon': offered_pokemon,
+    return render(request, 'trading/create_trade.html', {'offered_pokemon': offered_pokemon,
                                                  'user_pokemons': user_pokemons})

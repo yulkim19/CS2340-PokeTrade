@@ -1,15 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Other Users' Pokémon for Trade</title>
-  <!-- Load NES.css -->
-  <link rel="stylesheet" href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" />
-  <!-- Load NES font -->
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <!-- Custom CSS -->
   <style>
     body {
       font-family: 'Press Start 2P', cursive;
@@ -87,5 +78,4 @@
       <p class="nes-text is-error" style="text-align: center;">No posts available from other users at the moment.</p>
     {% endif %}
   </div>
-</body>
-</html>
+{% endblock content %}

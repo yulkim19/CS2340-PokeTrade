@@ -1,6 +1,48 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-    <h1 class="nes-text title">Trading</h1>
+    <div id="bg-layer"></div>
+    <div class="container">
+        <div class="collection-header">
+            <i class="nes-pokeball"></i>
+            <h1 class="nes-text title">Create a Trade Offer</h1>
+        </div>
+        <div class="nes-container is-rounded is-dark" style="margin-top: 2rem; padding: 2rem;">
+            <h2 class="nes-text is-primary">Offering</h2>
+            <div class="offered-pokemon" style="margin-bottom: 1.5rem;">
+                <p><strong>Name:</strong> {{ offered_pokemon.name }}</p>
+                <p><strong>Rarity:</strong> {{ offered_pokemon.rarity }}</p>
+                <img src="{{ offered_pokemon.sprite }}" alt="{{ offered_pokemon.name }}" class="pokemon-sprite"
+                    style="height: 150px">
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div style="text-align: center; margin: 2rem 0;">
+                    <img src="{% static 'img/trade_arrow.png' %}" alt="Trade Arrow" style="height: 150px;">
+                </div>
+
+                <br>
+                <h2 class="nes-text is-error">Seeking</h2>
+                <div class="nes-field">
+                    <label for="requested_pokemon" class="nes-text">Option 1 - Request Pokemon:</label>
+                    <input type="text" id="requested_pokemon" name="requested_pokemon" class="nes-input"
+                           placeholder="e.g., Pikachu">
+                    <label for="requested_pokemon" class="nes-text">Option 1 - Rarity:</label>
+                    <input type="number" id="rarity" name="rarity" class="nes-input" placeholder="Rarity level" min="0">
+                </div>
+                <br><br>
+                <div class="nes-field">
+                    <label for="gold" class="nes-text">Option 2 - Gold Offered:</label>
+                    <input type="number" id="gold" name="gold" class="nes-input" placeholder="Amount of gold" min="0">
+                </div>
+                <br>
+                <div class="form-actions" style="margin-top: 2rem;">
+                    <button type="submit" class="nes-btn is=primary">Create Trade</button>
+                    <a href="{% url 'Collection.index' %}" class="nes-btn is-error">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
 
 {% endblock content %}
