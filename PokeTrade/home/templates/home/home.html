@@ -1,10 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Welcome to PokéTrade</title>
-
   <link rel="stylesheet" href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{% static 'collection.css' %}">
@@ -41,13 +37,16 @@
       text-decoration: none;
     }
 
+    .login-link {
+      color: black
+    }
+
     .pokeball-img {
       width: 100px;
       margin-top: 3rem;
     }
   </style>
-</head>
-<body>
+
   <div class="home-header">
     <i class="nes-pokeball"></i>
     <h1 class="nes-text is-primary">Welcome to PokéTrade</h1>
@@ -57,17 +56,15 @@
   <p class="nes-text">Trade Pokémon, Chat with Other Players, and Build Your Collection!</p>
 
   <div class="nav-links">
-    <a href="{% url 'marketplace' %}" class="nes-btn is-success">Marketplace</a>
-    <a href="{% url 'chats' %}" class="nes-btn is-warning">Chats</a>
-    <a href="{% url 'collection' %}" class="nes-btn is-error">Your Collection</a>
     {% if user.is_authenticated %}
-      <a href="{% url 'logout' %}" class="nes-btn">Logout</a>
+      <a href="{% url 'Collection.index' %}">Collection</a>
+      <a href="{% url 'index' %}">Marketplace</a>
+      <a href="{% url 'accounts.logout' %}">Logout</a>
     {% else %}
-      <a href="{% url 'login' %}" class="nes-btn">Login</a>
-      <a href="{% url 'signup' %}" class="nes-btn is-primary">Sign Up</a>
+      <a href="{% url 'accounts.login' %}" class="nes-btn" style="color:black">Login</a>
+      <a href="{% url 'accounts.signup' %}" class="nes-btn is-primary">Sign Up</a>
     {% endif %}
   </div>
 
   <img src="{% static 'img/pokeball-spin.gif' %}" alt="Spinning Pokéball" class="pokeball-img">
-</body>
-</html>
+{% endblock content %}
