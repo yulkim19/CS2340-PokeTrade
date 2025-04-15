@@ -22,12 +22,20 @@ def trade_pokemon(request, pokemon_name):
         offered_pokemon_detail = request.POST.get('offered_pokemon')
         offered_pokemon = Pokemon.objects.filter(name=offered_pokemon_detail, owner=request.user).first()
 
+        market_post, created = MarketPost.objects.get_or_create(
+            user = request.user,
+            pokemon = offered_pokemon,
+            defaults={'time_remaining': 1000}
+        )
+
         trade_offer = TradeOffer.objects.create(
             user = request.user,
+            offer = market_post,
             pokemon_offered = offered_pokemon,
             pokemon_requested = requested_pokemon,
             gold = gold_amount if gold_amount else None
         )
+
         return redirect('Collection.index')
     return render(request, 'trading/create_trade.html', {'offered_pokemon': offered_pokemon,
                                                  'user_pokemons': user_pokemons})

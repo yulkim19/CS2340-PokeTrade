@@ -58,4 +58,4 @@ def login(request):
 @login_required
 def logout(request):
     auth_logout(request)
-    return redirect('home.index')
+    return redirect('accounts.login')
