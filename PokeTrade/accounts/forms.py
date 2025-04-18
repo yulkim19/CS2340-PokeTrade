@@ -31,9 +31,22 @@ class CustomUserCreationForm(UserCreationForm):
     def save(self, commit=True):
         user = super(CustomUserCreationForm, self).save(commit=False)
         user.email = self.cleaned_data.get('email')
-        user.profile.gold = self.cleaned_data.get('gold')
-
+        
         if commit:
             user.save()
+            # Either ensure profile exists first or create it here
+            # For example:
+            # Profile.objects.get_or_create(user=user)
+            user.profile.gold = self.cleaned_data.get('gold')
             user.profile.save()
             return user
+        # user = super(CustomUserCreationForm, self).save(commit=False)
+        # user.email = self.cleaned_data.get('email')
+        # user.profile.gold = self.cleaned_data.get('gold')
+
+        # if commit:
+        #     user.save()
+        #     user.profile.save()
+        #     return user
+        
+        
