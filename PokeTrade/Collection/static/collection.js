@@ -6,6 +6,7 @@ const searchButton = document.getElementById("search-button");
 const autocompleteList = document.getElementById("autocomplete-list");
 const pokemonCards = document.querySelectorAll('.pokemon-card');
 const pokemonNames = Array.from(pokemonCards).map(card => card.getAttribute('data-name'));
+
 document.querySelectorAll('.pokemon-card').forEach(card => {
   card.addEventListener('click', () => {
     modalTitle.textContent = `${card.dataset.name} (Rarity: ${card.dataset.rarity})`;
@@ -18,6 +19,7 @@ document.querySelectorAll('.pokemon-card').forEach(card => {
     localStorage.setItem('offered_pokemon_rarity', card.dataset.rarity);
   });
 });
+
 modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
 window.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.open) modal.close(); });
 
@@ -61,9 +63,16 @@ function spawnRunner() {
   const pool = [...document.querySelectorAll('.pokemon-sprite')].map(i => i.src);
   if (!pool.length) return;
 
+  const active = new Set(
+    [...document.querySelectorAll('img.runner')].map(r => r.src)
+  );
+
+  const available = pool.filter(src => !active.has(src));
+  if (!available.length) return;
+
   const runner = document.createElement('img');
-  runner.src  = pool[Math.floor(Math.random() * pool.length)];
-  runner.className = 'runner';
+  runner.src        = available[Math.floor(Math.random() * available.length)];
+  runner.className  = 'runner';
 
   const SIZE = 96;
   const vw = window.innerWidth, vh = window.innerHeight;
@@ -73,8 +82,8 @@ function spawnRunner() {
     y: Math.random() * (vh - SIZE)
   });
 
-  const edge = Math.floor(Math.random() * 4);
   let start;
+  const edge = Math.floor(Math.random() * 4);
   switch (edge) {
     case 0: start = { x: -SIZE,    y: Math.random() * vh }; break;
     case 1: start = { x: vw + SIZE, y: Math.random() * vh }; runner.dataset.flip = '1'; break;
@@ -85,7 +94,6 @@ function spawnRunner() {
   const hops = Math.floor(Math.random() * 4) + 2;
   const pts  = [start];
   for (let i = 0; i < hops; i++) pts.push(inside());
-
   const last = pts[pts.length - 1];
   pts.push({
     x: last.x < vw / 2 ? -SIZE : vw + SIZE,
@@ -120,14 +128,12 @@ function spawnRunner() {
       runner.style.left = pts[i].x + 'px';
       runner.style.top  = pts[i].y + 'px';
       runner.style.transform = runner.style.transform.includes('scaleX') ? runner.style.transform : '';
-
-
     }
     runner.remove();
   })();
 }
 
-function delay(){ return Math.random()*3000 + 3000; }
+function delay(){ return Math.random()*6000 + 6000; }
 function startLoop(){
   setTimeout(function loop(){
     if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
@@ -146,30 +152,31 @@ window.addEventListener('load', ()=>{
   startLoop();
 });
 
-        searchButton.addEventListener("click", function () {
-            const search = searchInput.value.trim().toLowerCase();
-            if (!search) return;
+searchButton.addEventListener("click", function () {
+    const search = searchInput.value.trim().toLowerCase();
+    if (!search) return;
 
-            let found = false;
-            pokemonCards.forEach(card => {
-                const name = card.getAttribute("data-name").toLowerCase();
-                if (name.includes(search)) {
-                    card.click();
-                    found = true;
-                }
-            });
-            if (!found) {
-                alert("No Pokemon found for: " + search);
-            }
-        });
+    let found = false;
+    pokemonCards.forEach(card => {
+        const name = card.getAttribute("data-name").toLowerCase();
+        if (name.includes(search)) {
+            card.click();
+            found = true;
+        }
+    });
+    if (!found) {
+        alert("No Pokemon found for: " + search);
+    }
+});
 
-                searchInput.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                searchButton.click();
-            }
-        });
-                searchInput.addEventListener("input", function () {
+searchInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        searchButton.click();
+    }
+});
+
+searchInput.addEventListener("input", function () {
     const query = this.value.trim().toLowerCase();
     autocompleteList.innerHTML = "";
 
@@ -199,4 +206,3 @@ document.addEventListener("click", (e) => {
         autocompleteList.innerHTML = "";
     }
 });
-
