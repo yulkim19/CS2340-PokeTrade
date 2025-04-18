@@ -1,81 +1,67 @@
 {% extends 'base.html' %}
-{% block content %}
 {% load static %}
-  <style>
-    body {
-      font-family: 'Press Start 2P', cursive;
-      background-color: #f4f4f4;
-      color: #333;
-      padding: 20px;
-    }
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-    }
-    .cards {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
-    /* Card styles applied to NES container cards */
-    .card {
-      width: 300px;
-      padding: 20px;
-      text-align: center;
-    }
-    .card img {
-      width: 150px;
-      height: auto;
-      margin-bottom: 15px;
-      border: 3px solid #fff;
-    }
-    /* Ensure form elements use the chosen NES font */
-    .nes-select select,
-    .nes-input,
-    .nes-btn {
-      font-family: 'Press Start 2P', cursive;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1 class="nes-text is-primary" style="text-align: center;">Marketplace</h1>
+{% block content %}
+  <link rel="stylesheet" href="{% static 'css/marketplace.css' %}">
 
-    {% if otherPosts %}
-      <div class="cards">
-        {% for post in otherPosts %}
-          <div class="card nes-container is-rounded">
-            <h3 class="nes-text is-success">{{ post.pokemon.name }}</h3>
-            <img src="{{ post.pokemon.sprite }}" alt="{{ post.pokemon.name }}" />
-            <p><strong>Rarity:</strong> {{ post.pokemon.rarity }}</p>
+  <div class="marketplace-section your-posts">
+    <h2>Your Listings</h2>
+    <div class="marketplace-grid">
+      {% for post in yourPosts %}
+      <div class="pokemon-card" data-post-id="{{ post.id }}" data-sprite="{{ post.pokemon.sprite }}" data-name="{{ post.pokemon.name }}" data-seller-username="{{ post.user.username }}">
+        <span class="pokemon-name">{{ post.pokemon.name }}</span>
+        <img src="{{ post.pokemon.sprite }}" alt="{{ post.pokemon.name }}" class="pokemon-sprite">
+        <br>
+        <span class="pokemon-rarity">Rarity: {{ post.pokemon.rarity }}</span>
 
-            <!-- Make Offer Form -->
-            <form action="{% url 'makeOffer' %}" method="POST">
-              {% csrf_token %}
-              <input type="hidden" name="seller_username" value="{{ post.user.username }}" />
-              <input type="hidden" name="seller_pokemon" value="{{ post.pokemon.name }}" />
-
-              <label for="pokemon_name_{{ forloop.counter }}">Your Pokémon:</label>
-              <div class="nes-select">
-                <select name="pokemon_name" id="pokemon_name_{{ forloop.counter }}">
-                  <option value="">None</option>
-                  {% for pokemon in request.user.pokemon_set.all %}
-                    <option value="{{ pokemon.name }}">{{ pokemon.name }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-
-              <label for="gold_{{ forloop.counter }}">Gold Offer:</label>
-              <input type="number" name="gold" id="gold_{{ forloop.counter }}" class="nes-input" min="0" required />
-
-              <button type="submit" class="nes-btn is-primary">Make Offer</button>
-            </form>
-          </div>
-        {% endfor %}
+        <dialog class="pokemon-dialog nes-dialog is-rounded is-primary">
+          <h2>{{ post.pokemon.name }} (Rarity: {{ post.pokemon.rarity }})</h2>
+          <img src="{{ post.pokemon.sprite }}" alt="{{ post.pokemon.name }}" class="dialog-sprite">
+          <p>Listed by you</p>
+          <button type="button" class="nes-btn close-btn">Close</button>
+        </dialog>
       </div>
-    {% else %}
-      <p class="nes-text is-error" style="text-align: center;">No posts available from other users at the moment.</p>
-    {% endif %}
+      {% empty %}
+      <p>You have no listings.</p>
+      {% endfor %}
+    </div>
   </div>
-{% endblock content %}
+
+  <div class="marketplace-section other-posts">
+    <h2>Other Listings</h2>
+    <div class="marketplace-grid">
+      {% for post in otherPosts %}
+      <div class="pokemon-card" data-post-id="{{ post.id }}" data-sprite="{{ post.pokemon.sprite }}" data-name="{{ post.pokemon.name }}" data-seller-username="{{ post.user.username }}">
+        <span class="pokemon-name">{{ post.pokemon.name }}</span>
+        <img src="{{ post.pokemon.sprite }}" alt="{{ post.pokemon.name }}" class="pokemon-sprite">
+        <br>
+        <span class="pokemon-rarity">Rarity: {{ post.pokemon.rarity }}</span>
+
+        <dialog class="pokemon-dialog nes-dialog is-rounded is-primary">
+          <h2>{{ post.pokemon.name }} (Rarity: {{ post.pokemon.rarity }})</h2>
+          <img src="{{ post.pokemon.sprite }}" alt="{{ post.pokemon.name }}" class="dialog-sprite">
+          <form action="{% url 'makeOffer' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="seller_username" value="{{ post.user.username }}">
+            <input type="hidden" name="seller_pokemon" value="{{ post.pokemon.name }}">
+
+            <label for="pokemon_name_{{ post.id }}">Your Pokémon (optional):</label>
+            <input id="pokemon_name_{{ post.id }}" type="text" name="pokemon_name" placeholder="Name">
+
+            <label for="gold_{{ post.id }}">Gold offer:</label>
+            <input id="gold_{{ post.id }}" type="number" name="gold" required>
+
+            <div class="dialog-actions">
+              <button type="submit" class="nes-btn is-primary trade-btn">Make Offer</button>
+              <button type="button" class="nes-btn close-btn">Close</button>
+            </div>
+          </form>
+        </dialog>
+      </div>
+      {% empty %}
+      <p>No other listings at the moment.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <script src="{% static 'js/marketplace.js' %}"></script>
+{% endblock %}
