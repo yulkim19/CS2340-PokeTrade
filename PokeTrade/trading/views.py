@@ -1,3 +1,4 @@
+from django.db.models.sql.query import get_order_dir
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -18,6 +19,20 @@ def trade_pokemon(request, pokemon_name):
         requested_pokemon = None
         if requested_pokemon_detail:
             requested_pokemon = Pokemon.objects.filter(name=requested_pokemon_detail).first()
+
+        if requested_pokemon_detail and not requested_pokemon:
+            messages.error(request, 'Requested Pokémon not found or is invalid. Please enter a valid Pokémon name.')
+            return redirect('trading.trade_pokemon', pokemon_name=offered_pokemon.name)
+
+        if not requested_pokemon and not gold_amount:
+            messages.error(request, 'Please specify either a Pokemon or an amount of gold.')
+            return redirect('trading.trading_pokemon', pokemon_name=offered_pokemon)
+
+        if gold_amount:
+            if not gold_amount.isdigit() or int(gold_amount) <= 0:
+                messages.error(request, 'Gold amount must be a valid positive number.')
+                return redirect('trading.trading_pokemon', pokemon_name=offered_pokemon)
+            gold_amount = int(gold_amount)
 
         market_post, created = MarketPost.objects.get_or_create(
             user = request.user,
