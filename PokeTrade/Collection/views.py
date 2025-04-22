@@ -13,10 +13,6 @@ def index(request):
     }
     return render(request, "collection/collectionview.html", context)
 
-
-def about(request):
-    return HttpResponse("Welcome to the About Page")
-
 @login_required
 def generate_pokemon_view(request):
     if request.method == "POST":

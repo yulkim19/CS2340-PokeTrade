@@ -81,6 +81,19 @@
             {% endif %}
         </div>
     </nav>
+    {% if messages %}
+      <div class="nes-container is-rounded is-dark with-title" style="margin-bottom: 1rem;">
+        <p class="title">Notice</p>
+        <ul class="nes-list is-disc">
+          {% for message in messages %}
+            <li{% if message.tags %} class="nes-text is-{{ message.tags }}" {% endif %}>
+              {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
     <!-- Header -->
     {% endblock %}
 

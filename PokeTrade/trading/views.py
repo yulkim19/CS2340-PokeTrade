@@ -21,7 +21,7 @@ def trade_pokemon(request, pokemon_name):
             requested_pokemon = Pokemon.objects.filter(name=requested_pokemon_detail).first()
 
         if requested_pokemon_detail and not requested_pokemon:
-            messages.error(request, 'Requested Pokémon not found or is invalid. Please enter a valid Pokémon name.')
+            messages.error(request, 'Requested Pokémon not found. Please enter a valid Pokémon name.')
             return redirect('trading.trade_pokemon', pokemon_name=offered_pokemon.name)
 
         if not requested_pokemon and not gold_amount:
