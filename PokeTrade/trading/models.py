@@ -14,3 +14,23 @@ class TradeOffer(models.Model):
     def __str__(self):
         return (f"Trade Offer by {self.user.username} (Offer: {self.pokemon_offered} "
                 f"for {self.pokemon_requested or 'Gold'})")
+
+class Transaction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transactions')
+    pokemon = models.ForeignKey(Pokemon, on_delete=models.SET_NULL, null=True, blank=True)
+    transaction_type = models.CharField(
+        max_length=10,
+        choices=[('trade', 'Trade'), ('sale', 'Sale')]
+    )
+    received_gold = models.PositiveIntegerField(null=True, blank=True)
+    traded_with = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='received_transactions'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} {self.transaction_type}d {self.pokemon.name if self.pokemon else 'a Pokemon'}"

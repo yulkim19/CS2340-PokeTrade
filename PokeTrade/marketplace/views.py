@@ -5,6 +5,7 @@ from .utils import createMarketPost, createTradeOffer
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from  Collection.models import Pokemon
+from trading.models import Transaction
 
 
 # Create your views here.
@@ -47,3 +48,5 @@ def makeOffer(request):
             pokemon = None
         createTradeOffer(offer, request.user, pokemon, gold)
     return redirect('marketplace.index')
+
+

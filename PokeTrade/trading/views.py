@@ -5,6 +5,7 @@ from django.contrib import messages
 from Collection.models import Pokemon
 from marketplace.models import MarketPost
 from .models import TradeOffer
+from .models import Transaction
 
 # Create your views here.
 @login_required
@@ -51,3 +52,10 @@ def trade_pokemon(request, pokemon_name):
         return redirect('Collection.index')
     return render(request, 'trading/create_trade.html', {'offered_pokemon': offered_pokemon,
                                                  'user_pokemons': user_pokemons})
+
+def trade_offers(request):
+    return render(request, 'trading/negotiations.html', {'trade_offers': trade_offers})
+
+def transaction_history(request):
+    transactions = Transaction.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'trading/transaction_history.html', {'transactions': transactions})
