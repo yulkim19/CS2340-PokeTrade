@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from Collection.models import Pokemon
@@ -8,7 +8,7 @@ from .models import TradeOffer
 # Create your views here.
 @login_required
 def trade_pokemon(request, pokemon_name):
-    offered_pokemon = Pokemon.objects.get(name=pokemon_name, owner=request.user)
+    offered_pokemon = get_object_or_404(Pokemon, name=pokemon_name, owner=request.user)
     user_pokemons = Pokemon.objects.filter(owner=request.user)
 
     if request.method == 'POST':
@@ -18,9 +18,6 @@ def trade_pokemon(request, pokemon_name):
         requested_pokemon = None
         if requested_pokemon_detail:
             requested_pokemon = Pokemon.objects.filter(name=requested_pokemon_detail).first()
-
-        offered_pokemon_detail = request.POST.get('offered_pokemon')
-        offered_pokemon = Pokemon.objects.filter(name=offered_pokemon_detail, owner=request.user).first()
 
         market_post, created = MarketPost.objects.get_or_create(
             user = request.user,

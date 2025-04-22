@@ -28,6 +28,7 @@
     </div>
     <div class="collection-grid">
       {% for pokemon in pokemons %}
+      <a href="{% url 'trading.trade_pokemon' pokemon_name=pokemon.name %}">
         <button class="pokemon-card
           {% if pokemon.rarity == 1 %} rarity-1
           {% elif pokemon.rarity == 2 %} rarity-2
@@ -43,6 +44,7 @@
           <img src="{{ pokemon.sprite }}" alt="{{ pokemon.name }}" class="pokemon-sprite">
           <span class="rarity-label">Rarity: {{ pokemon.rarity }}</span>
         </button>
+      </a>
       {% empty %}
         <p>You have no Pokémon in your collection yet!</p>
       {% endfor %}
