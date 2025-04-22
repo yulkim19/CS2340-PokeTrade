@@ -42,11 +42,8 @@
                                     {{ template_data.form.password2 }}
                             </div>
                             <div class="form-group">
-                                <br>
-                                <input type="radio" id="user" name="role" value="user">
-                                <label for="user" class="nes-text">User</label>
-                                <input type="radio" id="admin" name="role" value="admin">
-                                <label for="admin" class="nes-text">Admin</label>
+                                <label class="nes-text">Role</label>
+                                {{ template_data.form.role }}
                             </div>
                             <div class="text-center">
                                 <button type="submit" class="nes-btn is-primary">Sign Up</button>

@@ -12,8 +12,18 @@ class CustomErrorList(ErrorList):
         return mark_safe(''.join([f'<div class="alert alert-danger" role="alert">{e}</div>' for e in self]))
 
 class CustomUserCreationForm(UserCreationForm):
-    gold = forms.IntegerField(initial=0, min_value=0, label='Gold')
     email= forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class':'form-control'}))
+
+    ROLE_CHOICES = (
+        ('user', 'User'),
+        ('admin', 'Admin'),
+    )
+    role = forms.ChoiceField(
+        choices=ROLE_CHOICES,
+        widget=forms.RadioSelect,
+        required=True,
+        label='Role'
+    )
 
     def __init__(self, *args, **kwargs):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
@@ -31,22 +41,7 @@ class CustomUserCreationForm(UserCreationForm):
     def save(self, commit=True):
         user = super(CustomUserCreationForm, self).save(commit=False)
         user.email = self.cleaned_data.get('email')
-        
+
         if commit:
             user.save()
-            # Either ensure profile exists first or create it here
-            # For example:
-            # Profile.objects.get_or_create(user=user)
-            user.profile.gold = self.cleaned_data.get('gold')
-            user.profile.save()
             return user
-        # user = super(CustomUserCreationForm, self).save(commit=False)
-        # user.email = self.cleaned_data.get('email')
-        # user.profile.gold = self.cleaned_data.get('gold')
-
-        # if commit:
-        #     user.save()
-        #     user.profile.save()
-        #     return user
-        
-        
