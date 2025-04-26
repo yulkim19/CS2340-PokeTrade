@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{% if room_name %}
+  <h2>Chat with {{ recipient }}</h2>
+
+  <div class="nes-container is-dark with-title" style="margin-top: 2rem;">
+
+    <!-- Chat messages area -->
+    <div id="chat-box" class="nes-container is-dark" style="height: 300px; overflow-y: scroll; background-color: #212529; padding: 1rem; margin-bottom: 1rem;">
+      {% for message in messages %}
+        {% if message.sender.username == sender %}
+          <p><span class="nes-balloon from-right is-dark"><strong>{{ message.sender.username }}:</strong> {{ message.message }}</span></p>
+        {% else %}
+          <p><span class="nes-balloon from-left is-dark"><strong>{{ message.sender.username }}:</strong> {{ message.message }}</span></p>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- Input for typing messages -->
+    <input id="chat-input" type="text" placeholder="Type a message..." class="nes-input is-dark" style="width: 100%;">
+  </div>
+
+  <script>
+    const sender = "{{ sender }}";
+    const roomName = "{{ room_name }}";
+
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const chatBox = document.querySelector('#chat-box');
+        const messageClass = data.sender === sender ? 'from-right' : 'from-left';
+
+        chatBox.innerHTML += `
+          <p><span class="nes-balloon ${messageClass} is-dark">
+            <strong>${data.sender}:</strong> ${data.message}
+          </span></p>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    const input = document.querySelector('#chat-input');
+    input.focus();
+
+    input.onkeyup = function(e) {
+        if (e.keyCode === 13 && input.value.trim() !== "") {
+            chatSocket.send(JSON.stringify({
+                'message': input.value,
+                'username': sender
+            }));
+            input.value = '';
+        }
+    };
+  </script>
+
+{% else %}
+  <h2>Chat Lobby</h2>
+  <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+      <div class="nes-container is-dark with-title" style="flex: 1; min-width: 250px;">
+          <p class="title">Users</p>
+          <ul class="nes-list is-circle">
+              {% for user in users %}
+                  {% if user != request.user %}
+                      <li>
+                          <a href="{% url 'chats.chat_dashboard' username=user.username %}" class="nes-text is-primary">
+                              {{ user.username }}
+                          </a>
+                      </li>
+                  {% endif %}
+              {% empty %}
+                  <li>No users found.</li>
+              {% endfor %}
+          </ul>
+      </div>
+
+      <div class="nes-container is-dark with-title" style="flex: 2; min-width: 300px;">
+          <p class="title">Start a chat</p>
+          <p>Select a username from the left to start chatting.</p>
+      </div>
+  </div>
+{% endif %}
+
+{% endblock %}

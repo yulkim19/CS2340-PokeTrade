@@ -1,10 +1,11 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import MarketPost
 from .utils import createMarketPost, createTradeOffer
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
-from  Collection.models import Pokemon
+from Collection.models import Pokemon
 from trading.models import Transaction
 
 
@@ -49,4 +50,10 @@ def makeOffer(request):
         createTradeOffer(offer, request.user, pokemon, gold)
     return redirect('marketplace.index')
 
-
+@require_POST
+@login_required
+def deleteOffer(request):
+    post_id = request.POST.get("post_id")
+    post = get_object_or_404(MarketPost, id=post_id, user=request.user)
+    post.delete()
+    return redirect('index')

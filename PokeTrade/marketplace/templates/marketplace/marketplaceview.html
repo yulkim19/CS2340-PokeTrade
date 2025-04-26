@@ -17,8 +17,13 @@
           <h2>{{ post.pokemon.name }} (Rarity: {{ post.pokemon.rarity }})</h2>
           <img src="{{ post.pokemon.sprite }}" alt="{{ post.pokemon.name }}" class="dialog-sprite">
           <p>Listed by you</p>
+          <form action="{% url 'delete_offer' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="post_id" value="{{ post.id }}">
+            <button type="submit" class="nes-btn is-error">Delete Offer</button>
+          </form>
           <button type="button" class="nes-btn close-btn">Close</button>
-        </dialog>
+          </dialog>
       </div>
       {% empty %}
       <p>You have no listings.</p>
@@ -55,7 +60,8 @@
               <button type="button" class="nes-btn close-btn">Close</button>
             </div>
           </form>
-        </dialog>
+          <a href="{% url 'chats.chat_dashboard' username=post.user.username %}" class="nes-btn is-primary">Chat</a>
+          </dialog>
       </div>
       {% empty %}
       <p>No other listings at the moment.</p>
