@@ -10,11 +10,11 @@
     <!-- Chat messages area -->
     <div id="chat-box" class="nes-container is-dark" style="height: 300px; overflow-y: scroll; background-color: #212529; padding: 1rem; margin-bottom: 1rem;">
       {% for message in messages %}
-        {% if message.sender.username == sender %}
-          <p><span class="nes-balloon from-right is-dark"><strong>{{ message.sender.username }}:</strong> {{ message.message }}</span></p>
-        {% else %}
-          <p><span class="nes-balloon from-left is-dark"><strong>{{ message.sender.username }}:</strong> {{ message.message }}</span></p>
-        {% endif %}
+        <div class="{% if message.sender.username == sender %}message-sender{% else %}message-receiver{% endif %}">
+          <span class="nes-balloon is-dark">
+              {{ message.message }}
+          </span>
+        </div>
       {% endfor %}
     </div>
 
@@ -33,12 +33,17 @@
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         const chatBox = document.querySelector('#chat-box');
-        const messageClass = data.sender === sender ? 'from-right' : 'from-left';
+        const messageClass = data.sender === sender ? 'message-sender' : 'message-receiver';
 
+        // Append the received message to the chat box
         chatBox.innerHTML += `
-          <p><span class="nes-balloon ${messageClass} is-dark">
-            <strong>${data.sender}:</strong> ${data.message}
-          </span></p>`;
+          <div class="${messageClass}">
+            <span class="nes-balloon is-dark">
+              ${data.message}
+            </span>
+          </div>`;
+
+        // Automatically scroll to the bottom of the chat
         chatBox.scrollTop = chatBox.scrollHeight;
     };
 
@@ -46,6 +51,7 @@
         console.error('Chat socket closed unexpectedly');
     };
 
+    // Handle message input and send it to the server
     const input = document.querySelector('#chat-input');
     input.focus();
 
@@ -55,10 +61,43 @@
                 'message': input.value,
                 'username': sender
             }));
-            input.value = '';
+            input.value = '';  // Clear the input field after sending the message
         }
     };
   </script>
+
+  <style>
+    /* Ensure chat box content is scrollable */
+    #chat-box {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      height: 300px;
+      overflow-y: scroll;
+      background-color: #212529;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Align sender's messages to the right */
+    .message-sender {
+      align-self: flex-end;  /* Align sender's messages to the right */
+      margin-bottom: 10px;
+    }
+
+    /* Align receiver's messages to the left */
+    .message-receiver {
+      align-self: flex-start;  /* Align receiver's messages to the left */
+      margin-bottom: 10px;
+    }
+
+    /* NES Balloon styling for message bubbles */
+    .nes-balloon.is-dark {
+      background-color: #2c3e50;
+      color: #ecf0f1;
+    }
+
+  </style>
 
 {% else %}
   <h2>Chat Lobby</h2>
