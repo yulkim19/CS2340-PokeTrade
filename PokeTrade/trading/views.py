@@ -15,7 +15,14 @@ def trade_pokemon(request, pokemon_name):
     offered_pokemon = get_object_or_404(Pokemon, name=pokemon_name, owner=request.user)
     user_pokemons = Pokemon.objects.filter(owner=request.user)
 
-    available_pokemons = Pokemon.objects.exclude(owner=request.user, name=offered_pokemon.name)
+    available_pokemons = Pokemon.objects.exclude(owner=request.user).exclude(name=offered_pokemon.name)
+
+    existing_trade_offer = TradeOffer.objects.filter(user=request.user, pokemon_offered=offered_pokemon).exists()
+
+    if existing_trade_offer:
+        # Redirect to collection index with an error message
+        messages.error(request, 'You already have an active trade offer with this Pokémon.')
+        return redirect('Collection.index')
 
     if request.method == 'POST':
         requested_pokemon_detail = request.POST.get('requested_pokemon')
@@ -24,19 +31,30 @@ def trade_pokemon(request, pokemon_name):
         requested_pokemon = None
         if requested_pokemon_detail:
             requested_pokemon = Pokemon.objects.filter(name=requested_pokemon_detail).first()
-
-        if requested_pokemon_detail and not requested_pokemon:
-            messages.error(request, 'Requested Pokémon not found. Please enter a valid Pokémon name.')
-            return redirect('trading.trade_pokemon', pokemon_name=offered_pokemon.name)
+        if not requested_pokemon:
+            messages.error(request, 'Requested Pokémon not found. Please select a valid Pokémon.')
+            return render(request, 'trading/create_trade.html', {
+                'offered_pokemon': offered_pokemon,
+                'user_pokemons': user_pokemons,
+                'available_pokemons': available_pokemons
+            })
 
         if not requested_pokemon and not gold_amount:
-            messages.error(request, 'Please specify either a Pokemon or an amount of gold.')
-            return redirect('trading.trading_pokemon', pokemon_name=offered_pokemon)
+            messages.error(request, 'Please specify either a Pokémon or an amount of gold.')
+            return render(request, 'trading/create_trade.html', {
+                'offered_pokemon': offered_pokemon,
+                'user_pokemons': user_pokemons,
+                'available_pokemons': available_pokemons
+            })
 
         if gold_amount:
             if not gold_amount.isdigit() or int(gold_amount) <= 0:
                 messages.error(request, 'Gold amount must be a valid positive number.')
-                return redirect('trading.trading_pokemon', pokemon_name=offered_pokemon)
+                return render(request, 'trading/create_trade.html', {
+                    'offered_pokemon': offered_pokemon,
+                    'user_pokemons': user_pokemons,
+                    'available_pokemons': available_pokemons
+                })
             gold_amount = int(gold_amount)
 
         market_post, created = MarketPost.objects.get_or_create(
