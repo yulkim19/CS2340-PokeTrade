@@ -2,128 +2,54 @@
 {% load static %}
 {% block content %}
 
-{% if room_name %}
-  <h2>Chat with {{ recipient }}</h2>
+<!-- Outer container for the layout -->
+<div style="display: flex; gap: 2rem;">
 
-  <div class="nes-container is-dark with-title" style="margin-top: 2rem;">
+  <!-- Left Section: List of Users -->
+  <div class="nes-container is-dark with-title" style="flex: 1; min-width: 250px; height: 600px; overflow-y: scroll;">
+    <p class="title">Chat with Users</p>
+    <ul class="nes-list is-circle">
+        {% for user in users %}
+            {% if user != request.user %}
+                <li>
+                    <a href="{% url 'chats.chat_dashboard' username=user.username %}" class="nes-text is-primary">
+                        {{ user.username }}
+                    </a>
+                </li>
+            {% endif %}
+        {% empty %}
+            <li>No users found.</li>
+        {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Right Section: Active Chat -->
+  <div class="nes-container is-dark with-title" style="flex: 2; min-width: 500px; height: 600px; display: flex; flex-direction: column;">
 
     <!-- Chat messages area -->
-    <div id="chat-box" class="nes-container is-dark" style="height: 300px; overflow-y: scroll; background-color: #212529; padding: 1rem; margin-bottom: 1rem;">
-      {% for message in messages %}
-        <div class="{% if message.sender.username == sender %}message-sender{% else %}message-receiver{% endif %}">
-          <span class="nes-balloon is-dark">
-              {{ message.message }}
-          </span>
-        </div>
-      {% endfor %}
-    </div>
-
-    <!-- Input for typing messages -->
-    <input id="chat-input" type="text" placeholder="Type a message..." class="nes-input is-dark" style="width: 100%;">
-  </div>
-
-  <script>
-    const sender = "{{ sender }}";
-    const roomName = "{{ room_name }}";
-
-    const chatSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
-    );
-
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        const chatBox = document.querySelector('#chat-box');
-        const messageClass = data.sender === sender ? 'message-sender' : 'message-receiver';
-
-        // Append the received message to the chat box
-        chatBox.innerHTML += `
-          <div class="${messageClass}">
-            <span class="nes-balloon is-dark">
-              ${data.message}
-            </span>
-          </div>`;
-
-        // Automatically scroll to the bottom of the chat
-        chatBox.scrollTop = chatBox.scrollHeight;
-    };
-
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
-    };
-
-    // Handle message input and send it to the server
-    const input = document.querySelector('#chat-input');
-    input.focus();
-
-    input.onkeyup = function(e) {
-        if (e.keyCode === 13 && input.value.trim() !== "") {
-            chatSocket.send(JSON.stringify({
-                'message': input.value,
-                'username': sender
-            }));
-            input.value = '';  // Clear the input field after sending the message
-        }
-    };
-  </script>
-
-  <style>
-    /* Ensure chat box content is scrollable */
-    #chat-box {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      height: 300px;
-      overflow-y: scroll;
-      background-color: #212529;
-      padding: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    /* Align sender's messages to the right */
-    .message-sender {
-      align-self: flex-end;  /* Align sender's messages to the right */
-      margin-bottom: 10px;
-    }
-
-    /* Align receiver's messages to the left */
-    .message-receiver {
-      align-self: flex-start;  /* Align receiver's messages to the left */
-      margin-bottom: 10px;
-    }
-
-    /* NES Balloon styling for message bubbles */
-    .nes-balloon.is-dark {
-      background-color: #2c3e50;
-      color: #ecf0f1;
-    }
-
-  </style>
-
-{% else %}
-  <h2>Chat Lobby</h2>
-  <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-      <div class="nes-container is-dark with-title" style="flex: 1; min-width: 250px;">
-          <p class="title">Users</p>
-          <ul class="nes-list is-circle">
-              {% for user in users %}
-                  {% if user != request.user %}
-                      <li>
-                          <a href="{% url 'chats.chat_dashboard' username=user.username %}" class="nes-text is-primary">
-                              {{ user.username }}
-                          </a>
-                      </li>
-                  {% endif %}
-              {% empty %}
-                  <li>No users found.</li>
-              {% endfor %}
-          </ul>
+    {% if room_name %}
+      <h2>Chat with {{ recipient }}</h2>
+      <div id="chat-box" class="nes-container is-dark" style="flex: 1; overflow-y: scroll; background-color: #212529; padding: 1rem; margin-bottom: 1rem; display: flex; flex-direction: column-reverse;">
+        {% for message in messages reversed %}
+          <div style="display: flex; justify-content: {% if message.sender.username == sender %}flex-end{% else %}flex-start{% endif %}; margin-bottom: 1rem;">
+            <div class="nes-balloon is-dark" style="max-width: 60%; padding: 0.5rem;">
+                {{ message.message }}
+            </div>
+          </div>
+        {% endfor %}
       </div>
 
-      <div class="nes-container is-dark with-title" style="flex: 2; min-width: 300px;">
-          <p class="title">Start a chat</p>
-          <p>Select a username from the left to start chatting.</p>
-      </div>
+    <!-- Message Input Form -->
+    <form method="POST" action="{% url 'chats.chat_dashboard' username=recipient %}" style="display: flex; gap: 0.5rem;">
+      {% csrf_token %}
+      <input type="text" name="message" placeholder="Type a message..." class="nes-input is-dark" style="flex: 1;">
+      <button type="submit" class="nes-btn is-primary">Send</button>
+    </form>
+    {% else %}
+      <p>Select a user to start chatting!</p>
+    {% endif %}
   </div>
-{% endif %}
+
+</div>
 
 {% endblock %}
