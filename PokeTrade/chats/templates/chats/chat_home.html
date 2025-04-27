@@ -6,20 +6,22 @@
 <div style="display: flex; gap: 2rem;">
 
   <!-- Left Section: List of Users -->
-  <div class="nes-container is-dark with-title" style="flex: 1; min-width: 250px; height: 600px; overflow-y: scroll;">
-    <p class="title">Chat with Users</p>
+  <div class="nes-container is-dark with-title" style="flex: 1 1 250px; height: 600px; overflow-y: scroll;">
+      <br>
+    <h2 class="title">Messages</h2><hr>
     <ul class="nes-list is-circle">
-        {% for user in users %}
-            {% if user != request.user %}
+        {% if users %}
+            {% for user in users %}
                 <li>
-                    <a href="{% url 'chats.chat_dashboard' username=user.username %}" class="nes-text is-primary">
+                    <!-- Make the username a clickable link to open the chat with that user -->
+                    <a href="{% url 'chats.chat_dashboard_username' username=user.username %}">
                         {{ user.username }}
                     </a>
                 </li>
-            {% endif %}
-        {% empty %}
+            {% endfor %}
+        {% else %}
             <li>No users found.</li>
-        {% endfor %}
+        {% endif %}
     </ul>
   </div>
 
@@ -27,7 +29,7 @@
   <div class="nes-container is-dark with-title" style="flex: 2; min-width: 500px; height: 600px; display: flex; flex-direction: column;">
 
     <!-- Chat messages area -->
-    {% if room_name %}
+    {% if room_name and show_messages %}
       <h2>Chat with {{ recipient }}</h2>
       <div id="chat-box" class="nes-container is-dark" style="flex: 1; overflow-y: scroll; background-color: #212529; padding: 1rem; margin-bottom: 1rem; display: flex; flex-direction: column-reverse;">
         {% for message in messages reversed %}
@@ -40,7 +42,7 @@
       </div>
 
     <!-- Message Input Form -->
-    <form method="POST" action="{% url 'chats.chat_dashboard' username=recipient %}" style="display: flex; gap: 0.5rem;">
+    <form method="POST" action="{% url 'chats.chat_dashboard_username' username=recipient %}" style="display: flex; gap: 0.5rem;">
       {% csrf_token %}
       <input type="text" name="message" placeholder="Type a message..." class="nes-input is-dark" style="flex: 1;">
       <button type="submit" class="nes-btn is-primary">Send</button>

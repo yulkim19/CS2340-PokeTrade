@@ -111,7 +111,7 @@
 
             <div class="dialog-actions">
               <button type="submit" class="nes-btn is-error trade-btn">Make Offer</button>
-              <a href="{% url 'chats.chat_dashboard' username=post.user.username %}" class="nes-btn is-primary">Chat</a>
+              <a href="{% url 'chats.chat_dashboard_username' username=post.user.username %}" class="nes-btn is-primary">Chat</a>
             </div>
           </form>
           <button type="button" class="nes-btn close-btn">Close</button>

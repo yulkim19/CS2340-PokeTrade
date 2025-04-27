@@ -75,7 +75,7 @@
                 <a href="{% url 'Collection.index' %}">Collection</a>
                 <a href="{% url 'index' %}">Marketplace</a>
                 <a href="{% url 'trading.trade_offers' %}">Trade Offers</a>
-                <a href="{% url 'chats.chat_dashboard' username=user.username %}">Chats</a>
+                <a href="{% url 'chats.chat_dashboard' %}">Chats</a>
                 <a href="{% url 'trading.transaction_history' %}">Trade History</a>
                 <a href="{% url 'accounts.logout' %}">Logout ({{ user.username }})</a>
             {% else %}
