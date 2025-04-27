@@ -32,7 +32,7 @@
           {% else %}
           <div>
             <h2>Requested Gold:</h2>
-            <p>{{ post.trade_offers.first.gold }} Gold</p>
+            <p>{{ post.trade_offers.first.gold }}</p>
           </div>
           {% endif %}
 
@@ -40,6 +40,7 @@
             {% csrf_token %}
             <input type="hidden" name="post_id" value="{{ post.id }}">
             <button type="submit" class="nes-btn is-error">Delete Offer</button>
+            <br>
           </form>
           <button type="button" class="nes-btn close-btn">Close</button>
         </dialog>
@@ -79,12 +80,13 @@
           {% else %}
           <div>
             <h2>Requested Gold:</h2>
-            <p>{{ post.trade_offers.first.gold }} Gold</p>
+            <p>{{ post.trade_offers.first.gold }}</p>
           </div>
           {% endif %}
-
-          <br><br>
-          <form action="{% url 'makeOffer' %}" method="post">
+          <br>
+          <button type="submit" class="nes-btn is-primary">Accept Offer</button>
+          <br>
+          <form action="{% url 'make_offer' post.id %}" method="post">
             {% csrf_token %}
             <hr><br>
             <h2 style="color: red; font-weight: bold;">Make an Offer</h2>

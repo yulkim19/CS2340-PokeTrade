@@ -24,8 +24,8 @@ modal.addEventListener('click', e => { if (e.target === modal) modal.close(); })
 window.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.open) modal.close(); });
 
 const pokemonName = localStorage.getItem('offered_pokemon_name');
-const tradeButton = document.querySelector('.modal .nes-btn.is-primary');
-if (tradeButton) {
+const tradeButton = document.querySelector('.modal-content .nes-btn.is-primary');
+if (tradeButton && pokemonName) {
     tradeButton.addEventListener('click', () => {
         window.location.href = `/trading/create_trade/${pokemonName}/`;
     });

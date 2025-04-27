@@ -1,5 +1,4 @@
-from django.contrib.messages.context_processors import messages
-from django.http import HttpResponse
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import MarketPost
 from .utils import createMarketPost, createTradeOffer
@@ -32,10 +31,11 @@ def createMarketPost(request):
     return redirect('marketplace.index')
 
 
-def makeOffer(request):
+def makeOffer(request, post_id):
+    offer = get_object_or_404(MarketPost, id=post_id)
     if request.method == "POST":
-        seller_username = request.POST.get('seller_username')
-        seller_pokemon = request.POST.get('seller_pokemon')
+        seller_username = offer.user.username
+        seller_pokemon = offer.pokemon.name
 
         seller = get_object_or_404(User, username=seller_username)
         seller_pokemon = get_object_or_404(Pokemon, name=seller_pokemon, owner=seller)
@@ -43,9 +43,10 @@ def makeOffer(request):
         pokemon_name = request.POST.get('pokemon_name')
         gold = request.POST.get('gold')
 
+
         if gold and (not gold.isdigit() or int(gold) <= 0):
             messages.error(request, 'Gold amount must be a valid positive number.')
-            return redirect('marketplace.index')
+            return redirect('make_offer', post_id=offer.id)
 
         gold = int(gold) if gold else None
 
@@ -55,10 +56,11 @@ def makeOffer(request):
 
         if not pokemon and not gold:
             messages.error(request, 'You must offer either a Pokemon or an amount of gold.')
-            return redirect('marketplace.index')
+            return redirect('make_offer', post_id=offer.id)
 
         createTradeOffer(offer, request.user, pokemon, gold)
-    return redirect('marketplace.index')
+        return redirect('index')
+    return redirect('index')
 
 @require_POST
 @login_required

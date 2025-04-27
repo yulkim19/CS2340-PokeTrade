@@ -6,6 +6,6 @@ from .views import createMarketPost, makeOffer, deleteOffer
 urlpatterns = [
     path("", views.index, name="index"),
     path('create/', createMarketPost, name='createMarketPost'),
-    path('offer/', makeOffer, name='makeOffer'),
-    path('delete_offer/', views.deleteOffer, name='delete_offer')
+    path('make_offer/<int:post_id>/', makeOffer, name='make_offer'),
+    path('delete_offer/', views.deleteOffer, name='delete_offer'),
 ]
