@@ -1,3 +1,4 @@
+from django.contrib.messages.context_processors import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import MarketPost
@@ -22,8 +23,6 @@ def index(request):
     return render(request, "marketplace/marketplaceview.html", context)
 
 
-
-
 @login_required
 def createMarketPost(request):
     if request.method == "POST":
@@ -38,15 +37,26 @@ def makeOffer(request):
         seller_username = request.POST.get('seller_username')
         seller_pokemon = request.POST.get('seller_pokemon')
 
-        seller = User.objects.get(username=seller_username)
-        seller_pokemon = Pokemon.objects.get(name=seller_pokemon, owner=seller)
-        offer = MarketPost.objects.get(user=seller, pokemon=seller_pokemon)
+        seller = get_object_or_404(User, username=seller_username)
+        seller_pokemon = get_object_or_404(Pokemon, name=seller_pokemon, owner=seller)
+        offer = get_object_or_404(MarketPost, user=seller, pokemon=seller_pokemon)
         pokemon_name = request.POST.get('pokemon_name')
         gold = request.POST.get('gold')
-        if pokemon_name is not None or pokemon_name != '':
-            pokemon = Pokemon.objects.get(name=pokemon_name, owner=request.user)
-        else:
-            pokemon = None
+
+        if gold and (not gold.isdigit() or int(gold) <= 0):
+            messages.error(request, 'Gold amount must be a valid positive number.')
+            return redirect('marketplace.index')
+
+        gold = int(gold) if gold else None
+
+        pokemon = None
+        if pokemon_name:
+            pokemon = get_object_or_404(Pokemon, name=pokemon_name, owner=request.user)
+
+        if not pokemon and not gold:
+            messages.error(request, 'You must offer either a Pokemon or an amount of gold.')
+            return redirect('marketplace.index')
+
         createTradeOffer(offer, request.user, pokemon, gold)
     return redirect('marketplace.index')
 

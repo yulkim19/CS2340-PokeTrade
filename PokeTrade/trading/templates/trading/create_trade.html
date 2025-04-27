@@ -33,11 +33,15 @@
                 <br>
                 <h2 class="nes-text is-error">Seeking</h2>
                 <div class="nes-field">
-                    <label for="requested_pokemon" class="nes-text">Option 1 - Request Pokemon:</label>
-                    <input type="text" id="requested_pokemon" name="requested_pokemon" class="nes-input"
-                           placeholder="e.g., Pikachu">
-                    <label for="requested_pokemon" class="nes-text">Option 1 - Rarity:</label>
-                    <input type="number" id="rarity" name="rarity" class="nes-input" placeholder="Rarity level" min="0">
+                    <label for="requested_pokemon" class="nes-text">Option 1 - Request Pokémon:</label>
+                    <select id="requested_pokemon" name="requested_pokemon" class="nes-select">
+                        <option value="">Select a Pokémon</option>
+                        {% for pokemon in available_pokemons %}
+                            <option value="{{ pokemon.name }}">
+                                {{ pokemon.name }} (Rarity: {{ pokemon.rarity }})
+                            </option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <br><br>
                 <div class="nes-field">
