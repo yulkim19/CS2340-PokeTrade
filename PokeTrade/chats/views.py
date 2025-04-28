@@ -50,7 +50,6 @@ def chat_dashboard(request, username=None):
             'recipient': recipient.username,
             'sender': request.user.username,
             'messages': messages,
-            'show_messages': True,
         }
 
 
@@ -59,7 +58,6 @@ def chat_dashboard(request, username=None):
         context = {
             'users': chatted_users,
             'room_name': None,  # No active chat
-            'show_messages': False,  # No messages to show in this case
         }
 
     return render(request, 'chats/chat_home.html', context)

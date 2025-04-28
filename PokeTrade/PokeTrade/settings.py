@@ -152,4 +152,4 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'femiprattavril@gmail.com'
-EMAIL_HOST_PASSWORD = 'osfw tlyh cfcq gdnn'
+EMAIL_HOST_PASSWORD = 'gdoy qwzk ljnw fibw'

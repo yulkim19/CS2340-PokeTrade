@@ -65,11 +65,19 @@
     {% block header %}
     <!-- Header -->
     <nav class="nes-container is-dark with-title">
+        {% if user.is_authenticated %}
         <div class="logo">
             <a href="{% url 'Collection.index' %}">
                 <img src="{% static 'logo.png' %}" alt="logo">
             </a>
         </div>
+        {% else %}
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'logo.png' %}" alt="logo">
+            </a>
+        </div>
+        {% endif %}
         <div class="nav-links">
             {% if user.is_authenticated %}
                 <a href="{% url 'Collection.index' %}">Collection</a>
@@ -84,18 +92,6 @@
             {% endif %}
         </div>
     </nav>
-    {% if messages %}
-      <div class="nes-container is-rounded is-dark with-title" style="margin-bottom: 1rem;">
-        <p class="title">Notice</p>
-        <ul class="nes-list is-disc">
-          {% for message in messages %}
-            <li{% if message.tags %} class="nes-text is-{{ message.tags }}" {% endif %}>
-              {{ message }}
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
 
     <!-- Header -->
     {% endblock %}

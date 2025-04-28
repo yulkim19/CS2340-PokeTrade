@@ -6,7 +6,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"/>
   <link rel="stylesheet" href="{% static 'collection.css' %}">
-
+  {% if messages %}
+      <div class="nes-container is-rounded is-dark with-title" style="margin-bottom: 1rem;">
+        <p class="title">Notice</p>
+        <ul class="nes-list is-disc">
+          {% for message in messages %}
+            <li{% if message.tags %} class="nes-text is-{{ message.tags }}" {% endif %}>
+              {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
     <div id="bg-layer"></div>
     <div class="container">
 
@@ -57,11 +68,6 @@
             <button type="submit" class="nes-btn is-primary">Trade</button>
         </div>
     </dialog>
-
-    <form action="{% url 'generate_pokemon' %}" method="post">
-      {% csrf_token %}
-      <button type="submit" class="nes-btn is-primary">Generate Pokemon</button>
-    </form>
   </div>
 
   <script src="{% static 'collection.js' %}"></script>

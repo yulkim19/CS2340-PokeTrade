@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
 
+
 <!-- Outer container for the layout -->
 <div style="display: flex; gap: 2rem;">
 
@@ -29,7 +30,7 @@
   <div class="nes-container is-dark with-title" style="flex: 2; min-width: 500px; height: 600px; display: flex; flex-direction: column;">
 
     <!-- Chat messages area -->
-    {% if room_name and show_messages %}
+    {% if room_name %}
       <h2>Chat with {{ recipient }}</h2>
       <div id="chat-box" class="nes-container is-dark" style="flex: 1; overflow-y: scroll; background-color: #212529; padding: 1rem; margin-bottom: 1rem; display: flex; flex-direction: column-reverse;">
         {% for message in messages reversed %}
