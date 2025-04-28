@@ -8,4 +8,7 @@ urlpatterns = [
     path('create/', createMarketPost, name='createMarketPost'),
     path('make_offer/<int:post_id>/', makeOffer, name='make_offer'),
     path('delete_offer/', views.deleteOffer, name='delete_offer'),
+    path('search/', views.search, name='marketplace.search'),
+    path('filter_type/',views.filterType,name='marketplace.filterType'),
+    path('filter_rarity/',views.filterRarity,name='marketplace.filterRarity'),
 ]

@@ -82,6 +82,68 @@ body {
   animation: growMov 0.2s ease-in forwards;
 }
 
+.search-bar,
+.type-filter,
+.rarity-filter{
+  position: relative;
+  width: auto;
+  padding: 10px;
+  z-index: 1000;
+
+}
+
+.search-bar form,
+.type-filter form,
+.rarity-filter form{
+  width: auto;
+  margin: 10px 0 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* make the input expand to fill available space */
+.search-bar input[type="text"],
+.type-filter select,
+.rarity-filter select{
+  height:2.5em;
+  box-sizing:border-box;
+}
+
+.search-bar input[type="text"] {
+  margin-top:10px;
+}
+
+.search-bar button,
+.type-filter button,
+.rarity-filter button{
+  flex: 0 0 auto;
+}
+
+.search-bar button {
+  margin-top:20px;
+}
+
+.filter-search {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.filter-search .search-bar,
+.filter-search .type-filter,
+.filter-search .rarity-filter{
+  flex: none;
+}
+
+.type-filter form,
+.search-bar form,
+.rarity-filter form{
+  align-items: flex-start;
+}
+
 @keyframes growMov {
     0% {
         box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);

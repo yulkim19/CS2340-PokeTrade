@@ -14,8 +14,8 @@ class MarketPost(models.Model):
     time_remaining = models.IntegerField()
 
     def __str__(self):
-        return f"MarketPost by {self.user.username} - Offering {self.pokemon.name} for {self.requested_pokemon.name 
-            if self.requested_pokemon else 'Gold'}"
+        return f"MarketPost by {self.user.username} - Offering {self.pokemon.name} for {self.requested_pokemon.name if self.requested_pokemon else 'Gold'}"
+
 
 class TradeOffer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -25,8 +25,7 @@ class TradeOffer(models.Model):
 
     def __str__(self):
         return (f"Trade Offer by {self.user.username} (Offer: {self.pokemon_offered.name} "
-            f"for {self.pokemon_requested.name if self.pokemon_requested else 'Gold'})")
-
+                f"for {self.pokemon_requested.name if self.pokemon_requested else 'Gold'})")
 
     def clean(self):
         # Ensure that either a Pokémon or gold is requested
@@ -34,7 +33,6 @@ class TradeOffer(models.Model):
             raise models.ValidationError("Please specify either a Pokémon or gold to request.")
 
         # Optional: Add custom save method to handle post-trade actions (e.g., creating a transaction)
-
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

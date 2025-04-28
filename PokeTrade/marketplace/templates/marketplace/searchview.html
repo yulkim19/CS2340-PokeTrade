@@ -14,74 +14,9 @@
         </ul>
       </div>
     {% endif %}
-  <div class="filter-search">
-    <div class ="search-bar">
-      <form method="GET" action="{% url 'marketplace.search' %}">
-        {% csrf_token %}
-        <p>
-          <label for="search" class="nes-text">Search by Name</label>
-          <input id="search" type="text" name="search" required class="nes-input">
-          <button type="submit" class="nes-btn">
-            Search
-          </button>
-        </p>
-      </form>
-    </div>
-    <div class="type-filter">
-      <form method="GET" action="{% url 'marketplace.filterType' %}">
-        <label for="type" class="nes-text">Filter by Type</label>
-        <select id="type" name="type" class="nes-select">
-          <option value="normal">Normal</option>
-          <option value="fire">Fire</option>
-          <option value="water">Water</option>
-          <option value="electric">Electric</option>
-          <option value="grass">Grass</option>
-          <option value="ice">Ice</option>
-          <option value="fighting">Fighting</option>
-          <option value="poison">Poison</option>
-          <option value="ground">Ground</option>
-          <option value="flying">Flying</option>
-          <option value="psychic">Psychic</option>
-          <option value="bug">Bug</option>
-          <option value="rock">Rock</option>
-          <option value="ghost">Ghost</option>
-          <option value="dragon">Dragon</option>
-          <option value="dark">Dark</option>
-          <option value="steel">Steel</option>
-          <option value="fairy">Fairy</option>
-        </select>
-
-        <button type="submit" class="nes-btn">
-          Search
-        </button>
-
-      </form>
-    </div>
-
-    <div class="rarity-filter">
-      <form method="GET" action="{% url 'marketplace.filterRarity' %}">
-        <label for="rarity" class="nes-text">Filter by Rarity</label>
-        <select id="rarity" name="rarity" class="nes-select">
-          <option value=1>1+</option>
-          <option value=2>2+</option>
-          <option value=3>3+</option>
-          <option value=4>4+</option>
-          <option value=5>5+</option>
-          <option value=6>6+</option>
-          <option value=7>7+</option>
-          <option value=8>8+</option>
-          <option value=9>9+</option>
-        </select>
-
-        <button type="submit" class="nes-btn">
-          Search
-        </button>
-
-      </form>
-    </div>
-
-  </div>
-
+  <button type="button" onclick="window.location.href='{% url 'index' %}'" class="nes-btn">
+    Back
+  </button>
   <div class="marketplace-section your-posts">
     <h2>Your Listings</h2>
     <div class="marketplace-grid">

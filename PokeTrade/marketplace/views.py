@@ -5,6 +5,7 @@ from .utils import createMarketPost, createTradeOffer
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
+from django.db.models import Q
 from Collection.models import Pokemon
 from trading.models import Transaction
 
@@ -30,6 +31,49 @@ def createMarketPost(request):
         createMarketPost(request.user, pokemon)
     return redirect('marketplace.index')
 
+def filterType(request):
+    if request.method == "GET":
+        type = request.GET.get('type')
+    else:
+        type = ""
+    yourPosts = MarketPost.objects.filter(Q(pokemon__primary_type=type)|Q(pokemon__secondary_type=type), user=request.user)
+    posts_to_show = MarketPost.objects.filter(Q(pokemon__primary_type=type)|Q(pokemon__secondary_type=type)).exclude(user=request.user)
+    context = {
+        'yourPosts': yourPosts,
+        'otherPosts': posts_to_show
+    }
+    return render(request, "marketplace/searchview.html", context)
+
+def filterRarity(request):
+    if request.method == "GET":
+        rarity = request.GET.get('rarity')
+    else:
+        rarity = 0
+    yourPosts = MarketPost.objects.filter(Q(pokemon__rarity__gte=rarity)|Q(pokemon__rarity__gte=rarity), user=request.user)
+    posts_to_show = MarketPost.objects.filter(Q(pokemon__rarity__gte=rarity)|Q(pokemon__rarity__gte=rarity) ).exclude(user=request.user)
+    context = {
+        'yourPosts': yourPosts,
+        'otherPosts': posts_to_show
+    }
+    return render(request, "marketplace/searchview.html", context)
+
+
+
+
+@login_required
+def search(request):
+    if request.method == "GET":
+        pokemon_name = request.GET.get('search')
+    else:
+        pokemon_name = ""
+    yourPosts = MarketPost.objects.filter(pokemon__name__istartswith=pokemon_name, user=request.user)
+    posts_to_show = MarketPost.objects.filter(pokemon__name__istartswith=pokemon_name).exclude(user=request.user)
+    context = {
+        'yourPosts': yourPosts,
+        'otherPosts': posts_to_show
+    }
+    return render(request, "marketplace/searchview.html", context)
+
 
 def makeOffer(request, post_id):
     offer = get_object_or_404(MarketPost, id=post_id)
@@ -42,7 +86,6 @@ def makeOffer(request, post_id):
         offer = get_object_or_404(MarketPost, user=seller, pokemon=seller_pokemon)
         pokemon_name = request.POST.get('pokemon_name')
         gold = request.POST.get('gold')
-
 
         if gold and (not gold.isdigit() or int(gold) <= 0):
             messages.error(request, 'Gold amount must be a valid positive number.')
@@ -61,6 +104,7 @@ def makeOffer(request, post_id):
         createTradeOffer(offer, request.user, pokemon, gold)
         return redirect('index')
     return redirect('index')
+
 
 @require_POST
 @login_required
