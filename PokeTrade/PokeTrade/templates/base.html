@@ -11,7 +11,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <style>
-        /* Global navbar styling */
         body {
             margin: 0;
             background-color: #212529;
@@ -63,7 +62,6 @@
 </head>
 <body>
     {% block header %}
-    <!-- Header -->
     <nav class="nes-container is-dark with-title">
         {% if user.is_authenticated %}
         <div class="logo">
@@ -86,6 +84,11 @@
                 <a href="{% url 'chats.chat_dashboard' %}">Chats</a>
                 <a href="{% url 'transaction_history' %}">Trade History</a>
                 <a href="{% url 'accounts.logout' %}">Logout ({{ user.username }})</a>
+                <div class="gold-balance">
+                    <i class="nes-icon coin is-small"></i>
+                    {{ user.profile.gold }}
+
+                </div>
             {% else %}
                 <a class="nav-link" href="{% url 'accounts.login' %}">Login</a>
                 <a class="nav-link" href="{% url 'accounts.signup'%}">Sign Up</a>
@@ -93,7 +96,6 @@
         </div>
     </nav>
 
-    <!-- Header -->
     {% endblock %}
 
     <div id="middle">

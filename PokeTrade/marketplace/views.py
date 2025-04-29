@@ -78,7 +78,6 @@ def makeOffer(request, post_id):
         offered_name = request.POST.get('pokemon_name')
         gold_str     = request.POST.get('gold')
 
-        # Validate gold
         gold = None
         if gold_str:
             if not gold_str.isdigit() or int(gold_str) <= 0:
@@ -95,12 +94,11 @@ def makeOffer(request, post_id):
                 owner=request.user
             )
 
-        # Must offer something
+
         if not offered_pokemon and gold is None:
             messages.error(request, 'You must offer either a Pokémon or gold.')
             return redirect('make_offer', post_id=post_id)
 
-        # Create trade offer
         TradeOffer.objects.create(
             sender=request.user,
             recipient=market_post.user,
