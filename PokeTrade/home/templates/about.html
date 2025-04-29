@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+
+<style>
+  body {
+    font-family: 'Press Start 2P', cursive;
+    background-color: #212529;
+    color: white;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .about-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #2d2d2d;
+    padding: 2rem;
+    border-radius: 20px;
+    border: 4px solid #7d4dff;
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  .about-container h2 {
+    color: #ffde00;
+    text-shadow: -2px -2px 0 #3298cb, 2px -2px 0 #3298cb, -2px 2px 0 #3298cb, 2px 2px 0 #3298cb;
+    margin-bottom: 1rem;
+  }
+
+  .about-container p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #f1f1f1;
+  }
+
+  .about-container img {
+    max-width: 100%;
+    margin: 2rem 0;
+    border-radius: 10px;
+  }
+
+  .poke-logo-img {
+    max-width: 100px;
+    animation: bounce 1s ease-in-out infinite;
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .about-image-container {
+    text-align: center;
+    margin-top: 2rem;
+  }
+</style>
+
+<div class="about-container nes-container is-rounded is-dark">
+  <h2>About PokéTrade</h2>
+  <p>Welcome to **PokéTrade**, your go-to platform for trading, collecting, and chatting about Pokémon! This app allows players to:</p>
+  <ul>
+    <li>Trade Pokémon cards to build your dream collection</li>
+    <li>Negotiate deals with other trainers from around the world</li>
+    <li>Engage in live chats to discuss strategies, trades, and more</li>
+    <li>Join a friendly and growing community of passionate Pokémon fans</li>
+  </ul>
+  <p>Whether you are a beginner or a seasoned player, **PokéTrade** is the perfect place to enhance your Pokémon trading experience. Build your collection, make new friends, and have fun!</p>
+
+  <div class="about-image-container">
+    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png" alt="Pokémon image" class="poke-logo-img" />
+  </div>
+
+  <p>Our platform ensures a safe and enjoyable environment for everyone, with features that make trading and interacting as easy as catching 'em all. We also have special events, tournaments, and much more!</p>
+
+</div>
+
+{% endblock %}

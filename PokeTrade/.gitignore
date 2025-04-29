@@ -3,3 +3,4 @@
    *.pyd
    *.env
    *.venv
+   *.env

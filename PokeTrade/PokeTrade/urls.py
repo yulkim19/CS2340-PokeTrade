@@ -12,6 +12,7 @@ urlpatterns = [
     path('marketplace/', include('marketplace.urls')),
     path('trading/', include('trading.urls')),
     path('chats/', include('chats.urls')),
+    path('about/', views.about, name='about'),
     path('', include('home.urls')),
 ]
 
