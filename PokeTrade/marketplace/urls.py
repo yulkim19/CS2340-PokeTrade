@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import views
-from .views import createMarketPost, makeOffer, deleteOffer
+from .views import createMarketPost, makeOffer
 
 urlpatterns = [
     path("", views.index, name="index"),
@@ -11,4 +11,5 @@ urlpatterns = [
     path('search/', views.search, name='marketplace.search'),
     path('filter_type/',views.filterType,name='marketplace.filterType'),
     path('filter_rarity/',views.filterRarity,name='marketplace.filterRarity'),
+    path("accept/<int:post_id>/", views.accept, name="accept"),
 ]

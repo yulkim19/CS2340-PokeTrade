@@ -2,65 +2,103 @@
 {% load static %}
 {% block content %}
   <link rel="stylesheet" href="{% static 'css/marketplace.css' %}">
+
   {% if messages %}
-      <div class="nes-container is-rounded is-dark with-title" style="margin-bottom: 1rem;">
-        <p class="title">Notice</p>
-        <ul class="nes-list is-disc">
-          {% for message in messages %}
-            <li{% if message.tags %} class="nes-text is-{{ message.tags }}" {% endif %}>
-              {{ message }}
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
-  <button type="button" onclick="window.location.href='{% url 'index' %}'" class="nes-btn">
+    <div class="nes-container is-rounded is-dark with-title" style="margin-bottom: 1rem;">
+      <p class="title">Notice</p>
+      <ul class="nes-list is-disc">
+        {% for message in messages %}
+          <li{% if message.tags %} class="nes-text is-{{ message.tags }}"{% endif %}>
+            {{ message }}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <button
+    type="button"
+    onclick="window.location.href='{% url 'index' %}'"
+    class="nes-btn"
+  >
     Back
   </button>
+
   <div class="marketplace-section your-posts">
     <h2>Your Listings</h2>
     <div class="marketplace-grid">
       {% for post in yourPosts %}
-      <div class="pokemon-card" data-post-id="{{ post.id }}" data-sprite="{{ post.pokemon.sprite }}" data-name="{{ post.pokemon.name }}" data-seller-username="{{ post.user.username }}">
-        <span class="pokemon-name">{{ post.pokemon.name }}</span>
-        <img src="{{ post.pokemon.sprite }}" alt="{{ post.pokemon.name }}" class="pokemon-sprite">
-        <br>
-        <span class="pokemon-rarity">Rarity: {{ post.pokemon.rarity }}</span>
+        <div
+          class="pokemon-card"
+          data-post-id="{{ post.id }}"
+          data-sprite="{{ post.pokemon.sprite }}"
+          data-name="{{ post.pokemon.name }}"
+          data-seller-username="{{ post.user.username }}"
+        >
+          <span class="pokemon-name">{{ post.pokemon.name }}</span>
+          <img
+            src="{{ post.pokemon.sprite }}"
+            alt="{{ post.pokemon.name }}"
+            class="pokemon-sprite"
+          >
+          <br>
+          <span class="pokemon-rarity">Rarity: {{ post.pokemon.rarity }}</span>
 
-        <dialog class="pokemon-dialog nes-dialog is-rounded is-primary">
-          <h2>Offered Pokémon:</h2>
-          <p>{{ post.pokemon.name }} (Rarity: {{ post.pokemon.rarity }})</p>
-          <img src="{{ post.pokemon.sprite }}" alt="{{ post.pokemon.name }}" class="dialog-sprite">
+          <dialog class="pokemon-dialog nes-dialog is-rounded is-primary">
+            <h2>Offered Pokémon:</h2>
+            <p>{{ post.pokemon.name }} (Rarity: {{ post.pokemon.rarity }})</p>
+            <img
+              src="{{ post.pokemon.sprite }}"
+              alt="{{ post.pokemon.name }}"
+              class="dialog-sprite"
+            >
 
-          <div style="text-align: center;">
-            <img src="{% static 'img/trade_arrow.png' %}" alt="Trade Arrow" style="height: 100px;">
-          </div>
+            <div style="text-align: center;">
+              <img
+                src="{% static 'img/trade_arrow.png' %}"
+                alt="Trade Arrow"
+                style="height: 100px;"
+              >
+            </div>
 
-          <!-- Show the Requested Pokémon or Gold -->
-          {% if post.requested_pokemon %}
-          <div>
-            <h2>Requested Pokémon:</h2>
-            <p>{{ post.requested_pokemon.name }} (Rarity: {{ post.requested_pokemon.rarity }})</p>
-            <img src="{{ post.requested_pokemon.sprite }}" alt="{{ post.requested_pokemon.name }}" class="pokemon-sprite">
-          </div>
-          {% else %}
-          <div>
-            <h2>Requested Gold:</h2>
-            <p>{{ post.trade_offers.first.gold }}</p>
-          </div>
-          {% endif %}
+            {% if post.requested_pokemon %}
+              <div>
+                <h2>Requested Pokémon:</h2>
+                <p>
+                  {{ post.requested_pokemon.name }}
+                  (Rarity: {{ post.requested_pokemon.rarity }})
+                </p>
+                <img
+                  src="{{ post.requested_pokemon.sprite }}"
+                  alt="{{ post.requested_pokemon.name }}"
+                  class="pokemon-sprite"
+                >
+              </div>
+            {% else %}
+              <div>
+                <h2>Requested Gold:</h2>
+                <p>{{ post.gold }}</p>
+              </div>
+            {% endif %}
 
-          <form action="{% url 'delete_offer' %}" method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="post_id" value="{{ post.id }}">
-            <button type="submit" class="nes-btn is-error">Delete Offer</button>
+            <form
+              action="{% url 'delete_offer' %}"
+              method="POST"
+            >
+              {% csrf_token %}
+              <input type="hidden" name="post_id" value="{{ post.id }}">
+              <button type="submit" class="nes-btn is-error">
+                Delete Offer
+              </button>
+            </form>
             <br>
-          </form>
-          <button type="button" class="nes-btn close-btn">Close</button>
-        </dialog>
-      </div>
+            <button type="button" class="nes-btn close-btn">
+              Close
+            </button>
+          </dialog>
+        </div>
       {% empty %}
-      <p>You have no listings.</p>
+        <p>You have no listings.</p>
       {% endfor %}
     </div>
   </div>
@@ -69,70 +107,149 @@
     <h2>Other Listings</h2>
     <div class="marketplace-grid">
       {% for post in otherPosts %}
-      <div class="pokemon-card" data-post-id="{{ post.id }}" data-sprite="{{ post.pokemon.sprite }}" data-name="{{ post.pokemon.name }}" data-seller-username="{{ post.user.username }}">
-        <span class="pokemon-name">{{ post.pokemon.name }}</span>
-        <img src="{{ post.pokemon.sprite }}" alt="{{ post.pokemon.name }}" class="pokemon-sprite">
-        <br>
-        <span class="pokemon-rarity">Rarity: {{ post.pokemon.rarity }}</span>
-
-        <dialog class="pokemon-dialog nes-dialog is-rounded is-primary">
-          <h2>Offered Pokémon:</h2>
-          <p>{{ post.pokemon.name }} (Rarity: {{ post.pokemon.rarity }})</p>
-          <img src="{{ post.pokemon.sprite }}" alt="{{ post.pokemon.name }}" class="dialog-sprite">
-
-          <div style="text-align: center;">
-            <img src="{% static 'img/trade_arrow.png' %}" alt="Trade Arrow" style="height: 100px;">
-          </div>
-
-          <!-- Show the Requested Pokémon or Gold -->
-          {% if post.requested_pokemon %}
-          <div>
-            <h2>Requested Pokémon:</h2>
-            <p>{{ post.requested_pokemon.name }} (Rarity: {{ post.requested_pokemon.rarity }})</p>
-            <img src="{{ post.requested_pokemon.sprite }}" alt="{{ post.requested_pokemon.name }}" class="pokemon-sprite">
-          </div>
-          {% else %}
-          <div>
-            <h2>Requested Gold:</h2>
-            <p>{{ post.trade_offers.first.gold }}</p>
-          </div>
-          {% endif %}
+        <div
+          class="pokemon-card"
+          data-post-id="{{ post.id }}"
+          data-sprite="{{ post.pokemon.sprite }}"
+          data-name="{{ post.pokemon.name }}"
+          data-seller-username="{{ post.user.username }}"
+        >
+          <span class="pokemon-name">{{ post.pokemon.name }}</span>
+          <img
+            src="{{ post.pokemon.sprite }}"
+            alt="{{ post.pokemon.name }}"
+            class="pokemon-sprite"
+          >
           <br>
-          <button type="submit" class="nes-btn is-primary">Accept Offer</button>
-          <br>
-          <form action="{% url 'make_offer' post.id %}" method="post">
-            {% csrf_token %}
-            <hr><br>
-            <h2 style="color: red; font-weight: bold;">Make an Offer</h2>
-            <small style="display: block; margin: 0.5rem 0; color: #333; font-size: 0.65rem;">
-              (You can offer a Pokémon <strong>or</strong> an amount of gold — not both.)
-            </small>
-            <input type="hidden" name="seller_username" value="{{ post.user.username }}">
-            <input type="hidden" name="seller_pokemon" value="{{ post.pokemon.name }}">
+          <span class="pokemon-rarity">Rarity: {{ post.pokemon.rarity }}</span>
 
-            <label for="pokemon_name_{{ post.id }}">Option 1 - Your Pokémon:</label>
-            <select id="pokemon_name_{{ post.id }}" name="pokemon_name" class="nes-select">
-              <option value="">Select your Pokémon</option>
-              {% for pokemon in request.user.pokemons.all %}
-                <option value="{{ pokemon.name }}">{{ pokemon.name }}</option>
-              {% empty %}
-                <option value="">No Pokémon in your collection</option>
-              {% endfor %}
-            </select>
-            <br><br>
-            <label for="gold_{{ post.id }}">Option 2 - Gold offer:</label>
-            <input id="gold_{{ post.id }}" type="number" name="gold" min="1" placeholder="Optional">
+          <dialog class="pokemon-dialog nes-dialog is-rounded is-primary">
+            <h2>Offered Pokémon:</h2>
+            <p>{{ post.pokemon.name }} (Rarity: {{ post.pokemon.rarity }})</p>
+            <img
+              src="{{ post.pokemon.sprite }}"
+              alt="{{ post.pokemon.name }}"
+              class="dialog-sprite"
+            >
 
-            <div class="dialog-actions">
-              <button type="submit" class="nes-btn is-error trade-btn">Make Offer</button>
-              <a href="{% url 'chats.chat_dashboard_username' username=post.user.username %}" class="nes-btn is-primary">Chat</a>
+            <div style="text-align: center;">
+              <img
+                src="{% static 'img/trade_arrow.png' %}"
+                alt="Trade Arrow"
+                style="height: 100px;"
+              >
             </div>
-          </form>
-          <button type="button" class="nes-btn close-btn">Close</button>
-        </dialog>
-      </div>
+
+            {% if post.requested_pokemon %}
+              <div>
+                <h2>Requested Pokémon:</h2>
+                <p>
+                  {{ post.requested_pokemon.name }}
+                  (Rarity: {{ post.requested_pokemon.rarity }})
+                </p>
+                <img
+                  src="{{ post.requested_pokemon.sprite }}"
+                  alt="{{ post.requested_pokemon.name }}"
+                  class="pokemon-sprite"
+                >
+              </div>
+            {% else %}
+              <div>
+                <h2>Requested Gold:</h2>
+                <p>{{ post.gold }}</p>
+              </div>
+            {% endif %}
+
+            <form
+              action="{% url 'accept' post.id %}"
+              method="post"
+              style="display:inline;"
+            >
+              {% csrf_token %}
+              <button type="submit" class="nes-btn is-primary">
+                Accept Offer
+              </button>
+            </form>
+            <br>
+
+            <form
+              action="{% url 'make_offer' post.id %}"
+              method="post"
+            >
+              {% csrf_token %}
+              <hr><br>
+              <h2 style="color: red; font-weight: bold;">
+                Make an Offer
+              </h2>
+              <small
+                style="display: block; margin: 0.5rem 0;
+                       color: #333; font-size: 0.65rem;"
+              >
+                (You can offer a Pokémon <strong>or</strong>
+                an amount of gold — not both.)
+              </small>
+              <input
+                type="hidden"
+                name="seller_username"
+                value="{{ post.user.username }}"
+              >
+              <input
+                type="hidden"
+                name="seller_pokemon"
+                value="{{ post.pokemon.name }}"
+              >
+
+              <label for="pokemon_name_{{ post.id }}">
+                Option 1 – Your Pokémon:
+              </label>
+              <select
+                id="pokemon_name_{{ post.id }}"
+                name="pokemon_name"
+                class="nes-select"
+              >
+                <option value="">Select your Pokémon</option>
+                {% for pokemon in request.user.pokemons.all %}
+                  <option value="{{ pokemon.name }}">
+                    {{ pokemon.name }}
+                  </option>
+                {% empty %}
+                  <option value="">
+                    No Pokémon in your collection
+                  </option>
+                {% endfor %}
+              </select>
+              <br><br>
+
+              <label for="gold_{{ post.id }}">
+                Option 2 – Gold offer:
+              </label>
+              <input
+                id="gold_{{ post.id }}"
+                type="number"
+                name="gold"
+                min="1"
+                placeholder="Optional"
+              >
+
+              <div class="dialog-actions">
+                <button type="submit" class="nes-btn is-error trade-btn">
+                  Make Offer
+                </button>
+                <a
+                  href="{% url 'chats.chat_dashboard_username' username=post.user.username %}"
+                  class="nes-btn is-primary"
+                >
+                  Chat
+                </a>
+              </div>
+            </form>
+            <button type="button" class="nes-btn close-btn">
+              Close
+            </button>
+          </dialog>
+        </div>
       {% empty %}
-      <p>No other listings at the moment.</p>
+        <p>No other listings at the moment.</p>
       {% endfor %}
     </div>
   </div>

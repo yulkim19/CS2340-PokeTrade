@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from .models import Pokemon
 from .utils import generateRandomPokemon, get_or_create_background
 
-# Static list of all Pokémon types (must match your utils’ TYPE_PROMPTS keys)
 POKEMON_TYPES = [
     "Normal", "Fire", "Water", "Electric", "Grass", "Ice",
     "Fighting", "Poison", "Ground", "Flying", "Psychic", "Bug",
@@ -14,11 +13,9 @@ POKEMON_TYPES = [
 def index(request):
     pokemons = Pokemon.objects.filter(owner=request.user)
 
-    # 1️⃣ Read filters from GET params
     type_filter = request.GET.get('type', '')
     rarity_filter = request.GET.get('rarity', '')
 
-    # 2️⃣ Apply filters if present
     if type_filter:
         pokemons = pokemons.filter(primary_type__iexact=type_filter)
     if rarity_filter:
@@ -28,11 +25,9 @@ def index(request):
         except ValueError:
             pass
 
-    # 3️⃣ Attach background_url
     for p in pokemons:
         p.background_url = get_or_create_background(p)
 
-    # 4️⃣ Pass filters & choices into context
     context = {
         'pokemons': pokemons,
         'filter_type': type_filter,

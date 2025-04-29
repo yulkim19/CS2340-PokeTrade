@@ -101,7 +101,6 @@
             <img src="{% static 'img/trade_arrow.png' %}" alt="Trade Arrow" style="height: 100px;">
           </div>
 
-          <!-- Show the Requested Pokémon or Gold -->
           {% if post.requested_pokemon %}
           <div>
             <h2>Requested Pokémon:</h2>
@@ -149,7 +148,6 @@
             <img src="{% static 'img/trade_arrow.png' %}" alt="Trade Arrow" style="height: 100px;">
           </div>
 
-          <!-- Show the Requested Pokémon or Gold -->
           {% if post.requested_pokemon %}
           <div>
             <h2>Requested Pokémon:</h2>
@@ -162,9 +160,16 @@
             <p>{{ post.trade_offers.first.gold }}</p>
           </div>
           {% endif %}
-          <br>
-          <button type="submit" class="nes-btn is-primary">Accept Offer</button>
-          <br>
+<form
+  action="{% url 'accept' post.id %}"
+  method="post"
+  style="display:inline;"
+>
+  {% csrf_token %}
+  <button type="submit" class="nes-btn is-primary">
+    Accept Offer
+  </button>
+</form>
           <form action="{% url 'make_offer' post.id %}" method="post">
             {% csrf_token %}
             <hr><br>

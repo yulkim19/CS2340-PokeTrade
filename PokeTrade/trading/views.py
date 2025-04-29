@@ -54,7 +54,6 @@ def trade_pokemon(request, pokemon_name):
                 'user_pokemons':     user_pokemons,
                 'available_pokemons':available_pokemons
             })
-
         if gold_amount:
             if not gold_amount.isdigit() or int(gold_amount) <= 0:
                 messages.error(request,
@@ -70,20 +69,12 @@ def trade_pokemon(request, pokemon_name):
         market_post, _ = MarketPost.objects.get_or_create(
             user=request.user,
             pokemon=offered_pokemon,
+            gold=gold_amount,
             requested_pokemon=requested_pokemon,
             defaults={'time_remaining': 1000}
         )
 
         recipient_user = requested_pokemon.owner if requested_pokemon else market_post.user
-
-        TradeOffer.objects.create(
-            sender=request.user,
-            recipient=recipient_user,
-            offer=market_post,
-            pokemon_offered=offered_pokemon,
-            pokemon_requested=requested_pokemon,
-            gold=gold_amount or None
-        )
         return redirect('Collection.index')
 
     return render(request, 'trading/create_trade.html', {
@@ -108,9 +99,9 @@ def accept_offer(request, offer_id):
     gold_amt   = offer.gold or 0
 
     with transaction.atomic():
-        # 1) Swap Pokémon if there is one
+
         if trade_poke:
-            # store original owners
+
             orig_seller = listed_poke.owner
             orig_buyer  = trade_poke.owner
 
@@ -119,7 +110,7 @@ def accept_offer(request, offer_id):
             listed_poke.save()
             trade_poke.save()
 
-            # record the two sides of the trade
+
             Transaction.objects.create(
                 user=seller,
                 transaction_type='trade',
@@ -135,7 +126,7 @@ def accept_offer(request, offer_id):
                 traded_with=seller
             )
 
-            # 2) Then handle gold if included
+
             if gold_amt:
                 seller.profile.gold   += gold_amt
                 buyer.profile.gold     = max(0, buyer.profile.gold - gold_amt)
@@ -150,13 +141,13 @@ def accept_offer(request, offer_id):
                     traded_with=buyer
                 )
 
-        # Pure gold sale (no trade_poke)
+
         else:
-            # transfer the listed_poke to the buyer
+
             listed_poke.owner = buyer
             listed_poke.save()
 
-            # adjust gold balances
+
             seller.profile.gold   += gold_amt
             buyer.profile.gold     = max(0, buyer.profile.gold - gold_amt)
             seller.profile.save()
@@ -170,7 +161,7 @@ def accept_offer(request, offer_id):
                 traded_with=buyer
             )
 
-        # remove the marketplace listing (cascades to the TradeOffer)
+
         offer.offer.delete()
 
     return redirect('trade_offers')

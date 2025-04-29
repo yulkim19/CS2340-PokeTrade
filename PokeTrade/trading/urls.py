@@ -1,4 +1,3 @@
-# trading/urls.py
 from django.urls import path
 from . import views
 
@@ -20,12 +19,12 @@ urlpatterns = [
     ),
     path(
         "accept_offer/<int:offer_id>/",
-        views.accept_offer,      # ← matches def accept_offer in views.py
+        views.accept_offer,
         name="accept_offer"
     ),
     path(
         "decline_offer/<int:offer_id>/",
-        views.decline_offer,     # ← matches def decline_offer in views.py
+        views.decline_offer,
         name="decline_offer"
     ),
 ]
