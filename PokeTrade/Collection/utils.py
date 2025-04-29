@@ -15,7 +15,6 @@ if settings.OPENAI_API_KEY:
 else:
     print("WARNING: No OpenAI API Key set!")
 
-# --- PROMPTS SETUP ---
 
 TYPE_PROMPTS = {
     "normal": "A peaceful pixel art countryside with grassy fields, winding dirt paths, and warm sunlight.",
@@ -49,8 +48,6 @@ RARITY_PROMPTS = {
 }
 
 
-# --- Prompt Builder ---
-
 def build_background_prompt(pokemon):
     type_prompt = TYPE_PROMPTS.get(pokemon.primary_type.lower(), "A vibrant pixel art fantasy environment.")
     rarity_prompt = RARITY_PROMPTS.get(pokemon.rarity, "A colorful fantastical landscape full of magic.")
@@ -63,8 +60,6 @@ def build_background_prompt(pokemon):
 
     return full_prompt
 
-
-# --- Pokémon Fetchers ---
 
 def fetch_pokemon(name):
     url = f"https://pokeapi.co/api/v2/pokemon/{name.lower()}"
@@ -154,13 +149,8 @@ def generateRandomPokemon(trainer):
         return None
 
 
-# --- Background Generator ---
 
 def get_or_create_background(pokemon):
-    """
-    Return a cached background URL for this Pokémon's primary_type & rarity,
-    or generate one with DALL·E and save it locally.
-    """
     try:
         key = pokemon.primary_type.lower()
         rarity = pokemon.rarity

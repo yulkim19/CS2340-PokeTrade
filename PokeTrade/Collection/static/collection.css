@@ -109,7 +109,9 @@ body {
 .rarity-label {
   font-size: 0.8rem;
   margin-top: 0.5rem;
-  color: #ffce56;
+  color: white;
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.8);
+  text-align: center;
 }
 
 .pokemon-card.rarity-1 { border-color: #d3d3d3; }
@@ -138,8 +140,13 @@ body {
   }
 }
 
-.modal {
+#filter-dialog {
   background-image: url("img/pkbg.jpg");
+  background-size: cover;
+  background-position: center;
+}
+#pokemon-dialog {
+   background-image: url("img/pkbg.jpg");
   background-size: cover;
   background-position: center;
 }

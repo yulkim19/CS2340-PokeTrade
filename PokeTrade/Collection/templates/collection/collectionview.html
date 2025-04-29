@@ -38,8 +38,8 @@
     </div>
   </div>
 
-  <dialog id="filter-dialog" class="nes-dialog modal">
-    <form method="get" style="padding:1rem;">
+  <dialog id="filter-dialog" class="nes-dialog">
+    <form method="get" class="modal-content">
       <p class="title">Filter Collection</p>
       <label for="filter-type">Type:</label>
       <select id="filter-type" name="type" class="nes-select">
@@ -48,17 +48,19 @@
           <option value="{{ t }}" {% if filter_type == t %}selected{% endif %}>{{ t }}</option>
         {% endfor %}
       </select>
-      <br><br>
-      <label for="filter-rarity">Rarity:</label>
+      <br/><br/>
+      <label for="filter-rarity">Rarity ≥</label>
       <select id="filter-rarity" name="rarity" class="nes-select">
         <option value="">All</option>
         {% for r in rarities %}
           <option value="{{ r }}" {% if filter_rarity == r|stringformat:"s" %}selected{% endif %}>{{ r }}</option>
         {% endfor %}
       </select>
-      <br><br>
-      <button type="submit" class="nes-btn is-success">Apply</button>
-      <button type="button" id="filter-clear" class="nes-btn is-error">Clear</button>
+      <br/><br/>
+      <div style="text-align:right;">
+        <button type="submit" class="nes-btn is-success">Apply</button>
+        <button type="button" id="filter-clear" class="nes-btn is-error">Clear</button>
+      </div>
     </form>
     <div class="nes-dialog__footer">
       <button type="button" class="nes-btn" onclick="document.getElementById('filter-dialog').close()">Close</button>
@@ -94,15 +96,17 @@
 
   <img src="{% static 'img/campfire.gif' %}" alt="POKE_BALL" class="pokeball">
 
-  <dialog class="modal nes-dialog">
+  <!-- POKEMON DETAIL DIALOG -->
+  <dialog id="pokemon-dialog" class="nes-dialog">
     <div class="modal-content">
       <h2 class="modal-title">Pokémon Name</h2>
       <img class="modal-image" src="" alt="POKE_IMAGE">
     </div>
     <div class="modal-content">
-      <button type="submit" class="nes-btn is-primary">Trade</button>
+      <button id="trade-button" class="nes-btn is-primary">Trade</button>
     </div>
   </dialog>
+
 </div>
 
 <form action="{% url 'generate_pokemon' %}" method="post" style="text-align:center; margin:1rem 0;">
