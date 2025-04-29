@@ -19,3 +19,14 @@ class Pokemon(models.Model):
 
     def __str__(self):
         return self.name
+class Background(models.Model):
+    primary_type = models.CharField(max_length=50)
+    rarity = models.PositiveSmallIntegerField()
+    image = models.ImageField(upload_to='backgrounds/')
+
+    class Meta:
+        unique_together = ('primary_type', 'rarity')
+        indexes = [models.Index(fields=['primary_type', 'rarity'])]
+
+    def __str__(self):
+        return f"{self.primary_type.title()} (rarity {self.rarity})"

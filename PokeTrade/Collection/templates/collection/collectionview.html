@@ -2,74 +2,113 @@
 {% block content %}
 {% load static %}
 
-  <link rel="stylesheet" href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"/>
-  <link rel="stylesheet" href="{% static 'collection.css' %}">
-  {% if messages %}
-      <div class="nes-container is-rounded is-dark with-title" style="margin-bottom: 1rem;">
-        <p class="title">Notice</p>
-        <ul class="nes-list is-disc">
-          {% for message in messages %}
-            <li{% if message.tags %} class="nes-text is-{{ message.tags }}" {% endif %}>
-              {{ message }}
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
-    <div id="bg-layer"></div>
-    <div class="container">
+<link rel="stylesheet" href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"/>
+<link rel="stylesheet" href="{% static 'collection.css' %}">
 
-    <div class="collection-header">
-        <i class="nes-pokeball"></i>
-        <h1 class="nes-text title">My Pokémon Collection</h1>
-        <i class="nes-charmander"></i>
-    </div>
+{% if messages %}
+  <div class="nes-container is-rounded is-dark with-title" style="margin-bottom: 1rem;">
+    <p class="title">Notice</p>
+    <ul class="nes-list is-disc">
+      {% for message in messages %}
+        <li{% if message.tags %} class="nes-text is-{{ message.tags }}"{% endif %}>
+          {{ message }}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
 
-    <div class="nes-field" id="search-style">
-        <input id="search-field" class="nes-input" type="text" placeholder="Search for a Pokémon" name="search" autocomplete="off">
-        <div id="autocomplete-list" class="autocomplete-items"></div>
-        <br>
-        <button id="search-button"></button>
+<div id="bg-layer"></div>
+<div class="container">
+
+  <div class="collection-header">
+    <i class="nes-pokeball"></i>
+    <h1 class="nes-text title">My Pokémon Collection</h1>
+    <i class="nes-charmander"></i>
+  </div>
+
+  <div class="controls">
+    <button id="filter-button" class="nes-btn is-warning">Filter</button>
+    <div class="nes-field search-field">
+      <input id="search-field" class="nes-input" type="text" placeholder="Search for a Pokémon" autocomplete="off">
+      <div id="autocomplete-list" class="autocomplete-items"></div>
+      <button id="search-button"></button>
     </div>
-    <div class="collection-grid">
-      {% for pokemon in pokemons %}
+  </div>
+
+  <dialog id="filter-dialog" class="nes-dialog modal">
+    <form method="get" style="padding:1rem;">
+      <p class="title">Filter Collection</p>
+      <label for="filter-type">Type:</label>
+      <select id="filter-type" name="type" class="nes-select">
+        <option value="">All</option>
+        {% for t in types %}
+          <option value="{{ t }}" {% if filter_type == t %}selected{% endif %}>{{ t }}</option>
+        {% endfor %}
+      </select>
+      <br><br>
+      <label for="filter-rarity">Rarity:</label>
+      <select id="filter-rarity" name="rarity" class="nes-select">
+        <option value="">All</option>
+        {% for r in rarities %}
+          <option value="{{ r }}" {% if filter_rarity == r|stringformat:"s" %}selected{% endif %}>{{ r }}</option>
+        {% endfor %}
+      </select>
+      <br><br>
+      <button type="submit" class="nes-btn is-success">Apply</button>
+      <button type="button" id="filter-clear" class="nes-btn is-error">Clear</button>
+    </form>
+    <div class="nes-dialog__footer">
+      <button type="button" class="nes-btn" onclick="document.getElementById('filter-dialog').close()">Close</button>
+    </div>
+  </dialog>
+
+  <div class="collection-grid">
+    {% for pokemon in pokemons %}
       <a href="{% url 'trading.trade_pokemon' pokemon_name=pokemon.name %}">
-        <button class="pokemon-card
-          {% if pokemon.rarity == 1 %} rarity-1
-          {% elif pokemon.rarity == 2 %} rarity-2
-          {% elif pokemon.rarity == 3 %} rarity-3
-          {% elif pokemon.rarity == 4 %} rarity-4
-          {% elif pokemon.rarity == 5 %} rarity-5
-          {% elif pokemon.rarity in '67' %} rarity-high
-          {% endif %}"
+        <button
+          class="pokemon-card
+            {% if pokemon.rarity == 1 %} rarity-1
+            {% elif pokemon.rarity == 2 %} rarity-2
+            {% elif pokemon.rarity == 3 %} rarity-3
+            {% elif pokemon.rarity == 4 %} rarity-4
+            {% elif pokemon.rarity == 5 %} rarity-5
+            {% elif pokemon.rarity in '67' %} rarity-high
+            {% endif %}"
+          style="background-image: url('{{ pokemon.background_url }}'); background-size: cover; background-position: center;"
           data-name="{{ pokemon.name }}"
           data-sprite="{{ pokemon.sprite }}"
-          data-rarity="{{ pokemon.rarity }}">
+          data-rarity="{{ pokemon.rarity }}"
+        >
           <span class="pokemon-name">{{ pokemon.name }}</span>
           <img src="{{ pokemon.sprite }}" alt="{{ pokemon.name }}" class="pokemon-sprite">
           <span class="rarity-label">Rarity: {{ pokemon.rarity }}</span>
         </button>
       </a>
-      {% empty %}
-        <p>You have no Pokémon in your collection yet!</p>
-      {% endfor %}
-    </div>
-
-    <img src="{% static 'img/campfire.gif' %}" alt="POKE_BALL" class="pokeball">
-
-    <dialog class="modal nes-dialog">
-      <div class="modal-content">
-        <h2 class="modal-title">Pokémon Name</h2>
-        <img class="modal-image" src="" alt="POKE_IMAGE">
-      </div>
-        <div class="modal-content">
-            <button type="submit" class="nes-btn is-primary">Trade</button>
-        </div>
-    </dialog>
+    {% empty %}
+      <p>You have no Pokémon in your collection yet!</p>
+    {% endfor %}
   </div>
 
-  <script src="{% static 'collection.js' %}"></script>
+  <img src="{% static 'img/campfire.gif' %}" alt="POKE_BALL" class="pokeball">
 
+  <dialog class="modal nes-dialog">
+    <div class="modal-content">
+      <h2 class="modal-title">Pokémon Name</h2>
+      <img class="modal-image" src="" alt="POKE_IMAGE">
+    </div>
+    <div class="modal-content">
+      <button type="submit" class="nes-btn is-primary">Trade</button>
+    </div>
+  </dialog>
+</div>
+
+<form action="{% url 'generate_pokemon' %}" method="post" style="text-align:center; margin:1rem 0;">
+  {% csrf_token %}
+  <button type="submit" class="nes-btn is-primary">Generate Pokémon</button>
+</form>
+
+<script src="{% static 'collection.js' %}"></script>
 {% endblock content %}

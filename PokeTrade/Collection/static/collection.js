@@ -6,6 +6,16 @@ const searchButton = document.getElementById("search-button");
 const autocompleteList = document.getElementById("autocomplete-list");
 const pokemonCards = document.querySelectorAll('.pokemon-card');
 const pokemonNames = Array.from(pokemonCards).map(card => card.getAttribute('data-name'));
+const filterBtn    = document.getElementById('filter-button');
+const filterDialog = document.getElementById('filter-dialog');
+const filterClear  = document.getElementById('filter-clear');
+filterBtn.addEventListener('click', () => filterDialog.showModal());
+filterClear.addEventListener('click', () => {
+  window.location.href = window.location.pathname;
+});
+filterDialog.addEventListener('click', e => {
+  if (e.target === filterDialog) filterDialog.close();
+});
 
 document.querySelectorAll('.pokemon-card').forEach(card => {
   card.addEventListener('click', () => {

@@ -1,3 +1,4 @@
+
 body {
   font-family: 'Press Start 2P', cursive;
   background: url("img/pixelgrass.jpg") repeat;
@@ -5,13 +6,17 @@ body {
   padding: 0;
   color: #fff;
 }
+
 .title {
-    color: #2f2f2f;
+  color: #2f2f2f;
 }
+
 .pokemon-name {
-    color: #ffb32f;
-    text-align: center;
+  color: white;
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.8);
+  text-align: center;
 }
+
 .collection-header {
   display: flex;
   align-items: center;
@@ -28,15 +33,55 @@ body {
   text-align: center;
 }
 
-h1 {
-  margin-bottom: 1.5rem;
-}
-
-
-.nav-buttons {
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 
+.search-field {
+  flex: 1;
+  position: relative;
+}
+
+.search-field .nes-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border: 1px solid #d4d4d4;
+  background: white;
+  color: black;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.autocomplete-items div:hover {
+  background-color: #d9d9d9;
+}
+
+.autocomplete-active {
+  background-color: #007BFF !important;
+  color: #fff;
+}
+
+#search-button {
+  all: unset;
+  display: none;
+}
 
 .collection-grid {
   display: grid;
@@ -45,114 +90,86 @@ h1 {
   justify-items: center;
 }
 
-
 .pokemon-card {
   background: #333;
   padding: 1.5rem;
   border: 4px solid #555;
   width: 200px;
   height: 275px;
-  background: url("img/pkbg2.png") no-repeat center center;
-  background-size: cover;
-    text-align: center;
-    justify-content: center;
-}
-
-.pokemon-card p {
   text-align: center;
-  word-wrap: break-word;
-  white-space: normal;
-  overflow: hidden;
 }
 
 .pokemon-sprite {
   display: block;
   margin: 0 auto 0.5rem auto;
   width: 125px;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
 }
 
 .rarity-label {
   font-size: 0.8rem;
   margin-top: 0.5rem;
-  display: inline-block;
   color: #ffce56;
 }
 
-.pokemon-card.rarity-1 { border-color: #d3d3d3 !important; }
-.pokemon-card.rarity-2 { border-color: #90ee90 !important; }
-.pokemon-card.rarity-3 { border-color: #6bacc1 !important; }
-.pokemon-card.rarity-4 { border-color: #d98bd9 !important; }
-.pokemon-card.rarity-5 { border-color: #ffb32f !important; }
-.pokemon-card.rarity-high { border-color: #ff69b4 !important; }
+.pokemon-card.rarity-1 { border-color: #d3d3d3; }
+.pokemon-card.rarity-2 { border-color: #90ee90; }
+.pokemon-card.rarity-3 { border-color: #6bacc1; }
+.pokemon-card.rarity-4 { border-color: #d98bd9; }
+.pokemon-card.rarity-5 { border-color: #ffb32f; }
+.pokemon-card.rarity-high { border-color: #ff69b4; }
 
+.pokemon-card:hover {
+  box-shadow:
+    0 8px 16px rgba(0,0,0,0.5),
+    0 0 8px rgba(255,255,255,0.6);
+  animation: growMov 0.2s ease-in forwards;
+}
+
+@keyframes growMov {
+  0% {
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
+  }
+  100% {
+    transform: scale(1.08);
+    box-shadow: 4px 4px 4px rgba(0,0,0,0.2);
+    padding: 0.8em;
+    background-color: rgba(10,10,10,0.2);
+  }
+}
 
 .modal {
   background-image: url("img/pkbg.jpg");
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
 }
-.modal::backdrop { background: rgba(0,0,0,0.6); }
+
+.modal::backdrop {
+  background: rgba(0,0,0,0.6);
+}
+
 .modal-content {
   text-align: center;
   padding: 1rem;
 }
-.modal-image { width: 150px; }
 
-.container,
-.collection-grid,
-.pokemon-card {
-  position: relative;
-  z-index: 2;
-}
-.pokemon-card {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-.pokemon-card:hover {
-
-  box-shadow:
-    0 8px 16px rgba(0, 0, 0, 0.5),
-    0 0 8px rgba(255, 255, 255, 0.6);
-  animation: growMov 0.2s ease-in forwards;
-}
-
-@keyframes growMov {
-    0% {
-        box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
-    }
-    100% {
-        transform: scale(1.08);
-        box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2);
-        padding: 0.8em;
-        background-color: rgba(10,10,10,0.2);
-    }
+.modal-image {
+  width: 150px;
 }
 
 dialog[open] {
-    animation: fadein 0.3s ease-in forwards;
+  animation: fadein 0.3s ease-in forwards;
 }
 
 @keyframes fadein {
-    0% {
-        opacity:0;
-    }
-    100% {
-        opacity:1;
-    }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
-.runner {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 96px;
-  pointer-events: none;
-  image-rendering: pixelated;
 
-  filter: brightness(0.85) saturate(70%);
-  opacity: 0.85;
-
-  z-index: -2;
-}
 #bg-layer {
   position: absolute;
   inset: 0;
@@ -162,8 +179,6 @@ dialog[open] {
 
 .bg-sprite {
   position: absolute;
-  width: 64px;
-  height: 96px;
   background-image: url("img/Treespng.png");
   background-repeat: no-repeat;
   image-rendering: pixelated;
@@ -171,49 +186,34 @@ dialog[open] {
   filter: brightness(0.7) saturate(70%);
 }
 
-.tree-big-1  { width:70px;  height:88px;  background-position:-1px  -40px; }
-.tree-big-2  { width:85px;  height:107px; background-position:-94px -21px; }
-.tree-big-3  { width:75px;  height:104px; background-position:-194px -24px; }
-.tree-pine   { width:66px;  height:128px; background-position:-287px 0;    }
-.tree-dead   { width:66px;  height:99px;  background-position:-375px -29px;}
+.tree-big-1   { width: 70px;  height: 88px;  background-position: -1px  -40px; }
+.tree-big-2   { width: 85px;  height:107px;  background-position: -94px -21px; }
+.tree-big-3   { width: 75px;  height:104px;  background-position: -194px -24px; }
+.tree-pine    { width: 66px;  height:128px;  background-position: -287px   0; }
+.tree-dead    { width: 66px;  height: 99px;  background-position: -375px -29px; }
 
-.tree-small-1{ width:43px;  height:58px;  background-position:-13px -166px;}
-.tree-small-2{ width:61px;  height:88px;  background-position:-98px -136px;}
+.tree-small-1 { width: 43px;  height: 58px;  background-position: -13px -166px; }
+.tree-small-2 { width: 61px;  height: 88px;  background-position: -98px -136px; }
 
-.grass-strip { width:96px;  height:48px;  background-position:-192px -144px;}
-.log         { width:32px;  height:16px;  background-position:-320px -176px;}
-
+.grass-strip  { width: 96px;  height: 48px;  background-position: -192px -144px; }
+.log          { width: 32px;  height: 16px;  background-position: -320px -176px; }
 
 @keyframes sway {
-  0%,100% { transform: translateY(0); }
-  50%     { transform: translateY(-2px); }
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-2px); }
 }
-.sway { animation: sway 3s ease-in-out infinite; }
+.sway {
+  animation: sway 3s ease-in-out infinite;
+}
 
-  #autocomplete-list {
-    position: absolute;
-    border: 1px solid #d4d4d4;
-    background: white;
-    color: black;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 1000;
-    width: 90%;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  .autocomplete-items div {
-    padding: 10px;
-    cursor: pointer;
-  }
-  .autocomplete-items div:hover {
-    background-color: #d9d9d9;
-  }
-  .autocomplete-active {
-    background-color: #007BFF !important;
-    color: #ffffff;
-  }
-  #search-button {
-    all: unset;
-    display: none;
-  }
-
+.runner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 96px;
+  pointer-events: none;
+  image-rendering: pixelated;
+  filter: brightness(0.85) saturate(70%);
+  opacity: 0.85;
+  z-index: -2;
+}
