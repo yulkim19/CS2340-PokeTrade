@@ -1,110 +1,119 @@
+# marketplace/views.py
+
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import MarketPost
-from .utils import createMarketPost, createTradeOffer
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from django.contrib.auth.models import User
 from django.db.models import Q
+
 from Collection.models import Pokemon
-from trading.models import Transaction
-
-
-# Create your views here.
+from marketplace.models import MarketPost
+from trading.models import TradeOffer
 
 @login_required
 def index(request):
-    yourPosts = MarketPost.objects.filter(user=request.user)
-    otherPosts = MarketPost.objects.exclude(user=request.user)
-    context = {
-        'yourPosts': yourPosts,
-        'otherPosts': otherPosts
-    }
-    return render(request, "marketplace/marketplaceview.html", context)
-
+    your_posts = MarketPost.objects.filter(user=request.user)
+    other_posts = MarketPost.objects.exclude(user=request.user)
+    return render(request, "marketplace/marketplaceview.html", {
+        'yourPosts': your_posts,
+        'otherPosts': other_posts
+    })
 
 @login_required
 def createMarketPost(request):
     if request.method == "POST":
         pokemon_name = request.POST.get('pokemon_name')
-        pokemon = Pokemon.objects.get(name=pokemon_name, owner=request.user)
-        createMarketPost(request.user, pokemon)
-    return redirect('marketplace.index')
+        pokemon = get_object_or_404(Pokemon, name=pokemon_name, owner=request.user)
+        MarketPost.objects.create(user=request.user, pokemon=pokemon, time_remaining=1000)
+    return redirect('index')
 
 def filterType(request):
-    if request.method == "GET":
-        type = request.GET.get('type')
-    else:
-        type = ""
-    yourPosts = MarketPost.objects.filter(Q(pokemon__primary_type=type)|Q(pokemon__secondary_type=type), user=request.user)
-    posts_to_show = MarketPost.objects.filter(Q(pokemon__primary_type=type)|Q(pokemon__secondary_type=type)).exclude(user=request.user)
-    context = {
-        'yourPosts': yourPosts,
-        'otherPosts': posts_to_show
-    }
-    return render(request, "marketplace/searchview.html", context)
+    t = request.GET.get('type', '')
+    your_posts = MarketPost.objects.filter(
+        Q(pokemon__primary_type=t) | Q(pokemon__secondary_type=t),
+        user=request.user
+    )
+    other_posts = MarketPost.objects.filter(
+        Q(pokemon__primary_type=t) | Q(pokemon__secondary_type=t)
+    ).exclude(user=request.user)
+    return render(request, "marketplace/searchview.html", {
+        'yourPosts': your_posts,
+        'otherPosts': other_posts
+    })
 
 def filterRarity(request):
-    if request.method == "GET":
-        rarity = request.GET.get('rarity')
-    else:
-        rarity = 0
-    yourPosts = MarketPost.objects.filter(Q(pokemon__rarity__gte=rarity)|Q(pokemon__rarity__gte=rarity), user=request.user)
-    posts_to_show = MarketPost.objects.filter(Q(pokemon__rarity__gte=rarity)|Q(pokemon__rarity__gte=rarity) ).exclude(user=request.user)
-    context = {
-        'yourPosts': yourPosts,
-        'otherPosts': posts_to_show
-    }
-    return render(request, "marketplace/searchview.html", context)
-
-
-
+    r = request.GET.get('rarity', 0)
+    your_posts = MarketPost.objects.filter(
+        pokemon__rarity__gte=r,
+        user=request.user
+    )
+    other_posts = MarketPost.objects.filter(
+        pokemon__rarity__gte=r
+    ).exclude(user=request.user)
+    return render(request, "marketplace/searchview.html", {
+        'yourPosts': your_posts,
+        'otherPosts': other_posts
+    })
 
 @login_required
 def search(request):
-    if request.method == "GET":
-        pokemon_name = request.GET.get('search')
-    else:
-        pokemon_name = ""
-    yourPosts = MarketPost.objects.filter(pokemon__name__istartswith=pokemon_name, user=request.user)
-    posts_to_show = MarketPost.objects.filter(pokemon__name__istartswith=pokemon_name).exclude(user=request.user)
-    context = {
-        'yourPosts': yourPosts,
-        'otherPosts': posts_to_show
-    }
-    return render(request, "marketplace/searchview.html", context)
+    q = request.GET.get('search', '')
+    your_posts = MarketPost.objects.filter(
+        pokemon__name__istartswith=q,
+        user=request.user
+    )
+    other_posts = MarketPost.objects.filter(
+        pokemon__name__istartswith=q
+    ).exclude(user=request.user)
+    return render(request, "marketplace/searchview.html", {
+        'yourPosts': your_posts,
+        'otherPosts': other_posts
+    })
 
-
+@login_required
 def makeOffer(request, post_id):
-    offer = get_object_or_404(MarketPost, id=post_id)
+    market_post = get_object_or_404(MarketPost, id=post_id)
+
     if request.method == "POST":
-        seller_username = offer.user.username
-        seller_pokemon = offer.pokemon.name
+        offered_name = request.POST.get('pokemon_name')
+        gold_str     = request.POST.get('gold')
 
-        seller = get_object_or_404(User, username=seller_username)
-        seller_pokemon = get_object_or_404(Pokemon, name=seller_pokemon, owner=seller)
-        offer = get_object_or_404(MarketPost, user=seller, pokemon=seller_pokemon)
-        pokemon_name = request.POST.get('pokemon_name')
-        gold = request.POST.get('gold')
+        # Validate gold
+        gold = None
+        if gold_str:
+            if not gold_str.isdigit() or int(gold_str) <= 0:
+                messages.error(request, 'Gold amount must be a valid positive number.')
+                return redirect('make_offer', post_id=post_id)
+            gold = int(gold_str)
 
-        if gold and (not gold.isdigit() or int(gold) <= 0):
-            messages.error(request, 'Gold amount must be a valid positive number.')
-            return redirect('make_offer', post_id=offer.id)
+        # Validate offered Pokémon
+        offered_pokemon = None
+        if offered_name:
+            offered_pokemon = get_object_or_404(
+                Pokemon,
+                name=offered_name,
+                owner=request.user
+            )
 
-        gold = int(gold) if gold else None
+        # Must offer something
+        if not offered_pokemon and gold is None:
+            messages.error(request, 'You must offer either a Pokémon or gold.')
+            return redirect('make_offer', post_id=post_id)
 
-        pokemon = None
-        if pokemon_name:
-            pokemon = get_object_or_404(Pokemon, name=pokemon_name, owner=request.user)
+        # Create trade offer
+        TradeOffer.objects.create(
+            sender=request.user,
+            recipient=market_post.user,
+            offer=market_post,
+            pokemon_offered=offered_pokemon,
+            pokemon_requested=market_post.pokemon,
+            gold=gold
+        )
 
-        if not pokemon and not gold:
-            messages.error(request, 'You must offer either a Pokemon or an amount of gold.')
-            return redirect('make_offer', post_id=offer.id)
-
-        createTradeOffer(offer, request.user, pokemon, gold)
+        messages.success(request, 'Your trade offer has been submitted.')
         return redirect('index')
-    return redirect('index')
 
+    return redirect('index')
 
 @require_POST
 @login_required
