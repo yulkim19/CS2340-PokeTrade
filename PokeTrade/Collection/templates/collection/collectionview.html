@@ -33,13 +33,12 @@
         <i class="nes-icon coin"></i>
         {{ user.profile.gold }}
     </div>
-    <div class="search-field">
-    <div class="search-wrapper">
+    <div class="nes-field search-field">
       <input id="search-field" class="nes-input" type="text" placeholder="Search for a Pokémon" autocomplete="off">
-      <button id="filter-button" class="nes-btn is-warning">Filter</button>
+      <div id="autocomplete-list" class="autocomplete-items"></div>
+      <button id="search-button"></button>
     </div>
-    <div id="autocomplete-list" class="autocomplete-items"></div>
-  </div>
+    <button id="filter-button" class="nes-btn is-warning">Filter</button>
   </div>
 
   <dialog id="filter-dialog" class="nes-dialog">
@@ -112,7 +111,6 @@
   </dialog>
 
 </div>
-
 
 <script src="{% static 'collection.js' %}"></script>
 {% endblock content %}

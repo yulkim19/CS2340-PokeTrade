@@ -159,7 +159,7 @@ function spawnRunner() {
     case 3: start = { x: Math.random() * vw, y: vh + SIZE }; break;
   }
 
-  const hops = Math.floor(Math.random() * 4) + 2;
+  const hops = Math.floor(Math.random() * 3) + 2;
   const pts  = [start];
   for (let i = 0; i < hops; i++) pts.push(inside());
   const last = pts[pts.length - 1];
@@ -190,22 +190,22 @@ function spawnRunner() {
       const dx   = pts[i].x - pts[i - 1].x;
       const dy   = pts[i].y - pts[i - 1].y;
       const dist = Math.hypot(dx, dy);
-      const ms   = dist * 12 + 800;
+      const ms   = dist * 10 + 600;
 
       applyFlip(dx);
       await animateTo(dx, dy, ms);
 
       runner.style.left      = pts[i].x + 'px';
       runner.style.top       = pts[i].y + 'px';
-      runner.style.transform = runner.style.transform.includes('scaleX') 
-        ? runner.style.transform 
+      runner.style.transform = runner.style.transform.includes('scaleX')
+        ? runner.style.transform
         : '';
     }
     runner.remove();
   })();
 }
 
-function delay() { 
+function delay() {
   return Math.random() * 3000 + 3000;
 }
 
