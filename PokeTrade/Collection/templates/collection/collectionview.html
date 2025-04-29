@@ -24,18 +24,22 @@
 <div class="container">
 
   <div class="collection-header">
-    <i class="nes-pokeball"></i>
     <h1 class="nes-text title">My Pokémon Collection</h1>
     <i class="nes-charmander"></i>
   </div>
 
   <div class="controls">
-    <button id="filter-button" class="nes-btn is-warning">Filter</button>
-    <div class="nes-field search-field">
-      <input id="search-field" class="nes-input" type="text" placeholder="Search for a Pokémon" autocomplete="off">
-      <div id="autocomplete-list" class="autocomplete-items"></div>
-      <button id="search-button"></button>
+    <div class="gold-balance">
+        <i class="nes-icon coin"></i>
+        {{ user.profile.gold }}
     </div>
+    <div class="search-field">
+    <div class="search-wrapper">
+      <input id="search-field" class="nes-input" type="text" placeholder="Search for a Pokémon" autocomplete="off">
+      <button id="filter-button" class="nes-btn is-warning">Filter</button>
+    </div>
+    <div id="autocomplete-list" class="autocomplete-items"></div>
+  </div>
   </div>
 
   <dialog id="filter-dialog" class="nes-dialog">

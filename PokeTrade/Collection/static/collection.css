@@ -35,19 +35,41 @@ body {
 
 .controls {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
 }
 
-.search-field {
-  flex: 1;
-  position: relative;
+.gold-balance {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.search-field .nes-input {
-  width: 100%;
-  box-sizing: border-box;
+.search-field {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.search-wrapper .nes-input {
+  width: 350px;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  max-width: 100%;
+}
+
+#filter-button {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
 }
 
 #autocomplete-list {
@@ -67,6 +89,18 @@ body {
 .autocomplete-items div {
   padding: 10px;
   cursor: pointer;
+}
+
+#filter-button {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  height: auto;
+  white-space: nowrap;
+}
+
+#filter-button.nes-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
 }
 
 .autocomplete-items div:hover {
@@ -223,4 +257,12 @@ dialog[open] {
   filter: brightness(0.85) saturate(70%);
   opacity: 0.85;
   z-index: -2;
+}
+@media (max-width: 768px) {
+  .controls {
+    flex-direction: column;
+  }
+  .search-field {
+    max-width: 100%;
+  }
 }

@@ -115,7 +115,7 @@ function spawnDecorations() {
   if (!layer) return;
 
   const vw = window.innerWidth, vh = window.innerHeight;
-  const count = Math.floor(Math.random() * 7) + 16;
+  const count = Math.floor(Math.random() * 5) + 8;
 
   for (let i = 0; i < count; i++) {
     const spec = SPRITES[Math.floor(Math.random() * SPRITES.length)];
@@ -206,7 +206,7 @@ function spawnRunner() {
 }
 
 function delay() { 
-  return Math.random() * 6000 + 6000; 
+  return Math.random() * 3000 + 3000;
 }
 
 function startLoop() {
