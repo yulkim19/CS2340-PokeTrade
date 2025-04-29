@@ -101,16 +101,16 @@ def accept_offer(request, offer_id):
         recipient=request.user
     )
 
-    seller = offer.offer.user
-    buyer  = offer.sender
-    listed_poke = offer.offer.pokemon
-    trade_poke  = offer.pokemon_offered
-    gold_amt    = offer.gold or 0
+    seller     = offer.offer.user
+    buyer      = offer.sender
+    listed_poke= offer.offer.pokemon
+    trade_poke = offer.pokemon_offered
+    gold_amt   = offer.gold or 0
 
     with transaction.atomic():
-
+        # 1) Swap Pokémon if there is one
         if trade_poke:
-
+            # store original owners
             orig_seller = listed_poke.owner
             orig_buyer  = trade_poke.owner
 
@@ -119,6 +119,7 @@ def accept_offer(request, offer_id):
             listed_poke.save()
             trade_poke.save()
 
+            # record the two sides of the trade
             Transaction.objects.create(
                 user=seller,
                 transaction_type='trade',
@@ -133,14 +134,31 @@ def accept_offer(request, offer_id):
                 received_gold=None,
                 traded_with=seller
             )
-        else:
 
+            # 2) Then handle gold if included
+            if gold_amt:
+                seller.profile.gold   += gold_amt
+                buyer.profile.gold     = max(0, buyer.profile.gold - gold_amt)
+                seller.profile.save()
+                buyer.profile.save()
+
+                Transaction.objects.create(
+                    user=seller,
+                    transaction_type='sale',
+                    pokemon=None,
+                    received_gold=gold_amt,
+                    traded_with=buyer
+                )
+
+        # Pure gold sale (no trade_poke)
+        else:
+            # transfer the listed_poke to the buyer
             listed_poke.owner = buyer
             listed_poke.save()
 
-
-            seller.profile.gold += gold_amt
-            buyer.profile.gold   = max(0, buyer.profile.gold - gold_amt)
+            # adjust gold balances
+            seller.profile.gold   += gold_amt
+            buyer.profile.gold     = max(0, buyer.profile.gold - gold_amt)
             seller.profile.save()
             buyer.profile.save()
 
@@ -152,6 +170,7 @@ def accept_offer(request, offer_id):
                 traded_with=buyer
             )
 
+        # remove the marketplace listing (cascades to the TradeOffer)
         offer.offer.delete()
 
     return redirect('trade_offers')
