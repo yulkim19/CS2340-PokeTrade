@@ -67,7 +67,7 @@
 
   <div class="collection-grid">
     {% for pokemon in pokemons %}
-      <a href="{% url 'trading.trade_pokemon' pokemon_name=pokemon.name %}">
+      <a href="{% url 'trade_pokemon' pokemon_name=pokemon.name %}">
         <button
           class="pokemon-card
             {% if pokemon.rarity == 1 %} rarity-1

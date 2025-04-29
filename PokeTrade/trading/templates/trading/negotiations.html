@@ -1,5 +1,57 @@
 {% extends 'base.html' %}
-{% block content %}
 {% load static %}
-    <p>All the trade offers from other users go here</p>
+{% block content %}
+<div class="container">
+  <h1 class="nes-text is-primary">Incoming Trade Offers</h1>
+
+  {% if trade_offers %}
+    <ul class="nes-list is-disc" style="margin-top:1rem;">
+      {% for offer in trade_offers %}
+        <li>
+          <div class="nes-container with-title is-rounded" style="margin-bottom:1rem;">
+            <p class="title">
+              Offer #{{ offer.id }} from {{ offer.user.username }}
+            </p>
+            <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+
+              <!-- Offered -->
+              <div>
+                <img src="{{ offer.pokemon_offered.sprite }}"
+                     alt="{{ offer.pokemon_offered.name }}"
+                     style="width:48px; vertical-align:middle;">
+                <span>{{ offer.pokemon_offered.name }}</span>
+                {% if offer.gold %}+ {{ offer.gold }} 💰{% endif %}
+              </div>
+
+              <div>for</div>
+
+              <!-- Requested -->
+              <div>
+                {% if offer.pokemon_requested %}
+                  <img src="{{ offer.pokemon_requested.sprite }}"
+                       alt="{{ offer.pokemon_requested.name }}"
+                       style="width:48px; vertical-align:middle;">
+                  <span>{{ offer.pokemon_requested.name }}</span>
+                {% else %}
+                  <span>{{ offer.gold }} Gold</span>
+                {% endif %}
+              </div>
+
+              <!-- Actions -->
+              <div style="margin-left:auto;">
+                <a href="{% url 'accept_offer' offer.id %}"
+                   class="nes-btn is-success">Accept</a>
+                <a href="{% url 'decline_offer' offer.id %}"
+                   class="nes-btn is-error" style="margin-left:0.5rem;">Decline</a>
+              </div>
+
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p style="margin-top:2rem;">You have no incoming offers right now.</p>
+  {% endif %}
+</div>
 {% endblock content %}

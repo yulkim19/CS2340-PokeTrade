@@ -1,132 +1,202 @@
-from zoneinfo import available_timezones
-
-from django.db.models.sql.query import get_order_dir
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db import transaction
+
 from Collection.models import Pokemon
 from marketplace.models import MarketPost
-from .models import TradeOffer
-from .models import Transaction
+from .models import TradeOffer, Transaction
 
-# Create your views here.
 @login_required
 def trade_pokemon(request, pokemon_name):
-    offered_pokemon = get_object_or_404(Pokemon, name=pokemon_name, owner=request.user)
+    offered_pokemon = get_object_or_404(
+        Pokemon, name=pokemon_name, owner=request.user
+    )
     user_pokemons = Pokemon.objects.filter(owner=request.user)
+    available_pokemons = Pokemon.objects.exclude(
+        owner=request.user
+    ).exclude(name=offered_pokemon.name)
 
-    available_pokemons = Pokemon.objects.exclude(owner=request.user).exclude(name=offered_pokemon.name)
-
-    existing_trade_offer = TradeOffer.objects.filter(user=request.user, pokemon_offered=offered_pokemon).exists()
-
-    if existing_trade_offer:
-        # Redirect to collection index with an error message
-        messages.error(request, 'You already have an active trade offer with this Pokémon.')
+    if TradeOffer.objects.filter(
+        sender=request.user,
+        pokemon_offered=offered_pokemon
+    ).exists():
+        messages.error(request,
+            "You already have an active trade offer with this Pokémon."
+        )
         return redirect('Collection.index')
 
     if request.method == 'POST':
-        requested_pokemon_detail = request.POST.get('requested_pokemon')
-        gold_amount = request.POST.get('gold')
+        requested_name = request.POST.get('requested_pokemon')
+        gold_amount    = request.POST.get('gold')
 
         requested_pokemon = None
-        if requested_pokemon_detail:
-            requested_pokemon = Pokemon.objects.filter(name=requested_pokemon_detail).first()
+        if requested_name:
+            requested_pokemon = Pokemon.objects.filter(
+                name=requested_name
+            ).first()
             if not requested_pokemon:
-                messages.error(request, 'Requested Pokémon not found. Please select a valid Pokémon.')
+                messages.error(request,
+                    "Requested Pokémon not found."
+                )
                 return render(request, 'trading/create_trade.html', {
-                    'offered_pokemon': offered_pokemon,
-                    'user_pokemons': user_pokemons,
-                    'available_pokemons': available_pokemons
+                    'offered_pokemon':   offered_pokemon,
+                    'user_pokemons':     user_pokemons,
+                    'available_pokemons':available_pokemons
                 })
 
         if not requested_pokemon and not gold_amount:
-            messages.error(request, 'Please specify either a Pokémon or an amount of gold.')
+            messages.error(request,
+                "Please specify either a Pokémon or an amount of gold."
+            )
             return render(request, 'trading/create_trade.html', {
-                'offered_pokemon': offered_pokemon,
-                'user_pokemons': user_pokemons,
-                'available_pokemons': available_pokemons
+                'offered_pokemon':   offered_pokemon,
+                'user_pokemons':     user_pokemons,
+                'available_pokemons':available_pokemons
             })
 
         if gold_amount:
             if not gold_amount.isdigit() or int(gold_amount) <= 0:
-                messages.error(request, 'Gold amount must be a valid positive number.')
+                messages.error(request,
+                    "Gold amount must be a valid positive number."
+                )
                 return render(request, 'trading/create_trade.html', {
-                    'offered_pokemon': offered_pokemon,
-                    'user_pokemons': user_pokemons,
-                    'available_pokemons': available_pokemons
+                    'offered_pokemon':   offered_pokemon,
+                    'user_pokemons':     user_pokemons,
+                    'available_pokemons':available_pokemons
                 })
             gold_amount = int(gold_amount)
 
-        market_post, created = MarketPost.objects.get_or_create(
-            user = request.user,
-            pokemon = offered_pokemon,
-            requested_pokemon = requested_pokemon,
+        market_post, _ = MarketPost.objects.get_or_create(
+            user=request.user,
+            pokemon=offered_pokemon,
+            requested_pokemon=requested_pokemon,
             defaults={'time_remaining': 1000}
         )
 
-        trade_offer = TradeOffer.objects.create(
-            user = request.user,
-            offer = market_post,
-            pokemon_offered = offered_pokemon,
-            pokemon_requested = requested_pokemon,
-            gold = gold_amount if gold_amount else None
+        # Determine correct recipient
+        if requested_pokemon:
+            recipient_user = requested_pokemon.owner
+        else:
+            recipient_user = market_post.user
+
+        TradeOffer.objects.create(
+            sender=request.user,
+            recipient=recipient_user,
+            offer=market_post,
+            pokemon_offered=offered_pokemon,
+            pokemon_requested=requested_pokemon,
+            gold=gold_amount or None
         )
-
         return redirect('Collection.index')
-    return render(request, 'trading/create_trade.html', {'offered_pokemon': offered_pokemon,
-                                                 'user_pokemons': user_pokemons, 'available_pokemons': available_pokemons})
 
-def acceptOffer(request, post_id):
-    offer = get_object_or_404(MarketPost, id=post_id)
+    return render(request, 'trading/create_trade.html', {
+        'offered_pokemon':    offered_pokemon,
+        'user_pokemons':      user_pokemons,
+        'available_pokemons': available_pokemons
+    })
 
-    if offer.user == request.user:
-        messages.error(request, "You cannot accept your offer.")
-        return redirect('marketplace.index')
 
-    offered_pokemon = offer.pokemon
-    requested_pokemon = offer.requested_pokemon
+@login_required
+def accept_offer(request, offer_id):
+    # Only the intended recipient can accept
+    offer = get_object_or_404(
+        TradeOffer,
+        id=offer_id,
+        recipient=request.user
+    )
 
-    requested_pokemon_owner = requested_pokemon.owner
-    offered_pokemon_owner = offered_pokemon.owner
+    sender    = offer.sender
+    recipient = offer.recipient
+    p_off     = offer.pokemon_offered
+    p_req     = offer.pokemon_requested
+    gold      = offer.gold or 0
 
-    if requested_pokemon_owner != request.user:
-        messages.error(request, "You don't have the requested Pokemon to complete the trade.")
-        return redirect('marketplace.index')
-
-    gold_amount = offer.gold if offer.gold else 0
+    # Remember the MarketPost so we can delete it later
+    market_post = offer.offer
 
     with transaction.atomic():
-        offered_pokemon.owner = requested_pokemon_owner
-        requested_pokemon.owner = offered_pokemon_owner
+        # Straight Pokémon-for-Pokémon
+        if p_req:
+            # swap owners
+            owner_a = p_off.owner  # should be sender
+            owner_b = p_req.owner  # should be recipient
 
-        offered_pokemon.save()
-        requested_pokemon.save()
+            p_off.owner = owner_b
+            p_req.owner = owner_a
+            p_off.save()
+            p_req.save()
 
-        Transaction.objects.create(
-            user = offered_pokemon_owner,
-            transaction_type = "trade",
-            pokemon_offered = offered_pokemon,
-            pokemon_received = requested_pokemon,
-            gold_offered = gold_amount,
-            gold_received = None,
-        )
+            # record transactions
+            Transaction.objects.create(
+                user=sender,
+                transaction_type='trade',
+                pokemon=p_req,
+                received_gold=None,
+                traded_with=recipient
+            )
+            Transaction.objects.create(
+                user=recipient,
+                transaction_type='trade',
+                pokemon=p_off,
+                received_gold=None,
+                traded_with=sender
+            )
 
-        Transaction.objects.create(
-            user = offered_pokemon_owner,
-            transaction_type = "trade",
-            pokemon_offered = offered_pokemon,
-            pokemon_received = requested_pokemon,
-            gold_offered = None,
-            gold_received = gold_amount,
-        )
+        # Pokémon-for-Gold sale
+        else:
+            # transfer Pokémon to buyer
+            p_off.owner = recipient
+            p_off.save()
 
-        offer.delete()
+            # adjust gold balances (assuming profile.gold exists)
+            sender.profile.gold   += gold
+            recipient.profile.gold = max(0, recipient.profile.gold - gold)
+            sender.profile.save()
+            recipient.profile.save()
 
-    return redirect('marketplace.index')
+            Transaction.objects.create(
+                user=sender,
+                transaction_type='sale',
+                pokemon=None,
+                received_gold=gold,
+                traded_with=recipient
+            )
 
+        # delete the marketplace post (cascades to TradeOffer if needed)
+        market_post.delete()
+
+    # Redirect to incoming offers
+    return redirect('trade_offers')
+
+
+@login_required
+def decline_offer(request, offer_id):
+    # Only the recipient may decline
+    offer = get_object_or_404(
+        TradeOffer,
+        id=offer_id,
+        recipient=request.user
+    )
+    offer.delete()
+    messages.info(request, "Trade offer declined.")
+    return redirect('trade_offers')
+
+
+@login_required
 def trade_offers(request):
-    return render(request, 'trading/negotiations.html', {'trade_offers': trade_offers})
+    # Show only offers meant for the current user
+    incoming = TradeOffer.objects.filter(recipient=request.user)
+    return render(request, 'trading/negotiations.html', {
+        'trade_offers': incoming
+    })
 
+
+@login_required
 def transaction_history(request):
-    transactions = Transaction.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'trading/transaction_history.html', {'transactions': transactions})
+    transactions = Transaction.objects.filter(
+        user=request.user
+    ).order_by('-created_at')
+    return render(request, 'trading/transaction_history.html', {
+        'transactions': transactions
+    })
