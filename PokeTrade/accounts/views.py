@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from .forms import CustomUserCreationForm, CustomErrorList
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from Collection.models import Pokemon
 from Collection.utils import generateRandomPokemon
 
 
@@ -29,9 +31,6 @@ def signup(request):
                 user.is_superuser = True
             user.save()
 
-            for i in range(4):
-                generateRandomPokemon(user)
-
             return redirect('accounts.login')
         else:
             template_data['form'] = form
@@ -48,12 +47,21 @@ def login(request):
         if user is None:
             template_data['error'] = "The username or password you entered is incorrect."
             return render(request, 'accounts/login.html', {'template_data': template_data})
-        elif user.is_staff or user.is_superuser:
+        auth_login(request, user)
+
+        if user.is_staff or user.is_superuser:
             auth_login(request, user)
             return redirect('admin:index')
-        else:
-            auth_login(request, user)
-            return redirect('Collection.index')
+
+        if Pokemon.objects.filter(owner=user).exists() and user.profile.gold == 0:
+            user.profile.gold = 100
+            user.profile.save()
+
+            for x in range(4):
+                generateRandomPokemon(user)
+            messages.success(request, "Welcome! You received 100 gold and 4 Pokémon!")
+
+        return redirect('Collection.index')
 
 @login_required
 def logout(request):

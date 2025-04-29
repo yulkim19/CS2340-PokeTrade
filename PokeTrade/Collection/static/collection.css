@@ -45,12 +45,18 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-sizeL 2rem;
+}
+
+.nes-icon.coin {
+  font-size: 2rem;
 }
 
 .search-field {
   display: flex;
   justify-content: flex-end;
   flex: 1;
+  min-width: 0;
 }
 
 .search-wrapper {
@@ -58,13 +64,16 @@ body {
   align-items: center;
   gap: 0.5rem;
   justify-content: flex-end;
+  flex: 1;
 }
 
 .search-wrapper .nes-input {
-  width: 350px;
+    flex: 0 1 400px;
+  min-width: 150px;
+  max-width: 100%;
   font-size: 0.9rem;
   padding: 0.5rem;
-  max-width: 100%;
+  box-sizing: border-box;
 }
 
 #filter-button {

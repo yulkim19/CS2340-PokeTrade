@@ -113,10 +113,6 @@
 
 </div>
 
-<form action="{% url 'generate_pokemon' %}" method="post" style="text-align:center; margin:1rem 0;">
-  {% csrf_token %}
-  <button type="submit" class="nes-btn is-primary">Generate Pokémon</button>
-</form>
 
 <script src="{% static 'collection.js' %}"></script>
 {% endblock content %}
